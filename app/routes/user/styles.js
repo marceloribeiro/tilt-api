@@ -19,7 +19,53 @@ router.get('/:id', async (req, res) => {
     if (!style) {
       return res.status(404).json({ message: 'Style not found' });
     }
-    const presentedStyle = await StylePresenter.present(style, req.user);
+
+    const userStyles = await req.user.$relatedQuery('styles');
+    const presentedStyle = await StylePresenter.present(style, req.user, userStyles);
+    res.json(presentedStyle);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/select/:id', async (req, res) => {
+  try {
+    const style = await Style.query().findById(req.params.id);
+    if (!style) {
+      return res.status(404).json({ message: 'Style not found' });
+    }
+
+    await req.user.$relatedQuery('styles').relate(style.id);
+
+    const userStyles = await req.user.$relatedQuery('styles');
+    const presentedStyle = await StylePresenter.present(style, req.user, userStyles);
+    res.json(presentedStyle);
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(400).json({ message: 'Style already selected' });
+    }
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.delete('/select/:id', async (req, res) => {
+  try {
+    const style = await Style.query().findById(req.params.id);
+    if (!style) {
+      return res.status(404).json({ message: 'Style not found' });
+    }
+
+    const numDeleted = await req.user
+      .$relatedQuery('styles')
+      .unrelate()
+      .where('users_styles.style_id', style.id);
+
+    if (numDeleted === 0) {
+      return res.status(400).json({ message: 'Style was not selected' });
+    }
+
+    const userStyles = await req.user.$relatedQuery('styles');
+    const presentedStyle = await StylePresenter.present(style, req.user, userStyles);
     res.json(presentedStyle);
   } catch (err) {
     res.status(400).json({ message: err.message });

@@ -14,7 +14,7 @@ class TopSizePresenter {
       return sizes.map(size => this.present(size));
     }
 
-    const userSizes = await user.$relatedQuery('topSizes');
+    const userSizes = await user.$relatedQuery('top_sizes');
     return sizes.map(size => this.present(size, user, userSizes));
   }
 
@@ -25,7 +25,7 @@ class TopSizePresenter {
       return userSizes.some(userSize => userSize.id === size.id);
     }
 
-    return user.$relatedQuery('topSizes')
+    return user.$relatedQuery('top_sizes')
       .where('top_sizes.id', size.id)
       .first()
       .then(result => !!result);

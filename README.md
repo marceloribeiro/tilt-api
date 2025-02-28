@@ -1,6 +1,8 @@
 ### Tilt API
 
-## Models, Migrations
+## Models, Migrations, and Seeds
+
+### Migrations
 
 You can create a new migration by running:
 
@@ -37,3 +39,70 @@ This adds the two most common migration commands:
 - `migrate:rollback` reverts the most recent migration batch
 
 These commands will execute the code in the `up()` and `down()` functions respectively in your migration files.
+
+### Seeds
+
+Seed files allow you to populate your database with test or default data.
+
+#### Seed Commands
+
+Create a new seed file:
+```bash
+npx knex seed:make seed_name
+# Example: npx knex seed:make 001_categories
+```
+
+Run all seed files:
+```bash
+npx knex seed:run
+```
+
+Run a specific seed file:
+```bash
+npx knex seed:run --specific=001_categories.js
+```
+
+#### Development Scripts
+
+Add these to your package.json for convenience:
+```json
+{
+  "scripts": {
+    "db:seed": "knex seed:run",
+    "db:seed:make": "knex seed:make",
+    "db:reset": "knex migrate:rollback --all && knex migrate:latest && knex seed:run"
+  }
+}
+```
+
+#### Example Seed Files
+
+```javascript:seeds/001_categories.js
+exports.seed = async function(knex) {
+  // Deletes ALL existing entries
+  await knex('categories').del();
+
+  // Inserts seed entries
+  await knex('categories').insert([
+    { name: 'Sneakers' },
+    { name: 'Running' },
+    { name: 'Basketball' },
+    { name: 'Casual' }
+  ]);
+};
+```
+
+```javascript:seeds/002_brands.js
+exports.seed = async function(knex) {
+  // Deletes ALL existing entries
+  await knex('brands').del();
+
+  // Inserts seed entries
+  await knex('brands').insert([
+    { name: 'Nike' },
+    { name: 'Adidas' },
+    { name: 'Puma' },
+    { name: 'New Balance' }
+  ]);
+};
+```
