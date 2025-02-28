@@ -6,12 +6,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const indexRouter = require('./app/routes/index');
-const usersRouter = require('./app/routes/users');
 const authRouter = require('./app/routes/auth');
+const adminRoutes = require('./app/routes/admin');
+
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/admin', adminRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
