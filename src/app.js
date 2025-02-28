@@ -13,6 +13,4 @@ app.use('/', routes);
 // Serve Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+module.exports = app;
