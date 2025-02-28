@@ -1,8 +1,3 @@
-const express = require('express');
-const router = express.Router();
-const FootwearSize = require('../../models/footwear_size');
-const FootwearSizePresenter = require('../../presenters/footwear_size_presenter');
-
 /**
  * @swagger
  * /user/footwear_sizes:
@@ -92,6 +87,12 @@ const FootwearSizePresenter = require('../../presenters/footwear_size_presenter'
  *       404:
  *         description: Footwear size not found
  */
+
+const express = require('express');
+const router = express.Router();
+const FootwearSize = require('../../models/footwear_size');
+const FootwearSizePresenter = require('../../presenters/footwear_size_presenter');
+
 
 // List all footwear sizes
 router.get('/', async (req, res) => {

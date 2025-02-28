@@ -161,7 +161,7 @@ const ContactPresenter = require('../../presenters/contact_presenter');
 router.get('/', async (req, res) => {
   try {
     const contacts = await Contact.query().withGraphFetched('user');
-    res.json(ContactPresenter.presentMany(contacts));
+    res.json(await ContactPresenter.presentMany(contacts));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

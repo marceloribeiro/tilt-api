@@ -115,7 +115,7 @@ const CategoryPresenter = require('../../presenters/category_presenter');
 router.get('/', async (req, res) => {
   try {
     const categories = await Category.query();
-    res.json(CategoryPresenter.presentMany(categories));
+    res.json(await CategoryPresenter.presentMany(categories));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

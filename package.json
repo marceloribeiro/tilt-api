@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "console": "node scripts/console.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "console": "node src/scripts/console.js"
   },
   "keywords": [],
   "author": "",

@@ -144,7 +144,7 @@ const FootwearSizePresenter = require('../../presenters/footwear_size_presenter'
 router.get('/', async (req, res) => {
   try {
     const sizes = await FootwearSize.query();
-    res.json(FootwearSizePresenter.presentMany(sizes));
+    res.json(await FootwearSizePresenter.presentMany(sizes));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

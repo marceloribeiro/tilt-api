@@ -124,7 +124,7 @@ const BrandPresenter = require('../../presenters/brand_presenter');
 router.get('/', async (req, res) => {
   try {
     const brands = await Brand.query();
-    res.json(BrandPresenter.presentMany(brands));
+    res.json(await BrandPresenter.presentMany(brands));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
