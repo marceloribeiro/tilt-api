@@ -55,6 +55,7 @@ class User extends Model {
     const FootwearSize = require('./footwear_size');
     const Style = require('./style');
     const TopSize = require('./top_size');
+    const Contact = require('./contact');
 
     return {
       brands: {
@@ -119,6 +120,15 @@ class User extends Model {
             to: 'users_top_sizes.top_size_id'
           },
           to: 'top_sizes.id'
+        }
+      },
+
+      contacts: {
+        relation: Model.HasManyRelation,
+        modelClass: Contact,
+        join: {
+          from: 'users.id',
+          to: 'contacts.user_id'
         }
       }
     };
