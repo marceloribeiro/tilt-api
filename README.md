@@ -11,6 +11,8 @@ npx knex seed:run
 npm run dev
 ```
 
+API Documentation is available at [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
 ## Models, Migrations, and Seeds
 
 ### Migrations
