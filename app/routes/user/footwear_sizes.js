@@ -3,6 +3,96 @@ const router = express.Router();
 const FootwearSize = require('../../models/footwear_size');
 const FootwearSizePresenter = require('../../presenters/footwear_size_presenter');
 
+/**
+ * @swagger
+ * /user/footwear_sizes:
+ *   get:
+ *     summary: Get all footwear sizes with selection status
+ *     tags: [User Footwear Sizes]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all footwear sizes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/FootwearSize'
+ *       401:
+ *         description: Not authenticated
+ *
+ * /user/footwear_sizes/{id}:
+ *   get:
+ *     summary: Get a specific footwear size
+ *     tags: [User Footwear Sizes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Footwear size details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FootwearSize'
+ *       404:
+ *         description: Footwear size not found
+ *
+ * /user/footwear_sizes/select/{id}:
+ *   post:
+ *     summary: Select a footwear size
+ *     tags: [User Footwear Sizes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Footwear size selected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FootwearSize'
+ *       400:
+ *         description: Footwear size already selected
+ *       404:
+ *         description: Footwear size not found
+ *
+ *   delete:
+ *     summary: Deselect a footwear size
+ *     tags: [User Footwear Sizes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Footwear size deselected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FootwearSize'
+ *       400:
+ *         description: Footwear size was not selected
+ *       404:
+ *         description: Footwear size not found
+ */
+
 // List all footwear sizes
 router.get('/', async (req, res) => {
   try {

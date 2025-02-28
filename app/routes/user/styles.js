@@ -3,6 +3,96 @@ const router = express.Router();
 const Style = require('../../models/style');
 const StylePresenter = require('../../presenters/style_presenter');
 
+/**
+ * @swagger
+ * /user/styles:
+ *   get:
+ *     summary: Get all styles with selection status
+ *     tags: [User Styles]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all styles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Style'
+ *       401:
+ *         description: Not authenticated
+ *
+ * /user/styles/{id}:
+ *   get:
+ *     summary: Get a specific style
+ *     tags: [User Styles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Style details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Style'
+ *       404:
+ *         description: Style not found
+ *
+ * /user/styles/select/{id}:
+ *   post:
+ *     summary: Select a style
+ *     tags: [User Styles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Style selected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Style'
+ *       400:
+ *         description: Style already selected
+ *       404:
+ *         description: Style not found
+ *
+ *   delete:
+ *     summary: Deselect a style
+ *     tags: [User Styles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Style deselected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Style'
+ *       400:
+ *         description: Style was not selected
+ *       404:
+ *         description: Style not found
+ */
+
 router.get('/', async (req, res) => {
   try {
     const styles = await Style.query();

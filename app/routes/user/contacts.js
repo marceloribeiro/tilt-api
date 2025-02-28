@@ -3,6 +3,127 @@ const router = express.Router();
 const Contact = require('../../models/contact');
 const ContactPresenter = require('../../presenters/contact_presenter');
 
+/**
+ * @swagger
+ * /user/contacts:
+ *   get:
+ *     summary: Get all contacts for the current user
+ *     tags: [User Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of user's contacts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Contact'
+ *       401:
+ *         description: Not authenticated
+ *
+ *   post:
+ *     summary: Create a new contact
+ *     tags: [User Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone_number:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Contact created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Contact'
+ *
+ * /user/contacts/{id}:
+ *   get:
+ *     summary: Get a specific contact
+ *     tags: [User Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Contact details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Contact'
+ *       404:
+ *         description: Contact not found
+ *
+ *   patch:
+ *     summary: Update a contact
+ *     tags: [User Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone_number:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Contact updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Contact'
+ *       404:
+ *         description: Contact not found
+ *
+ *   delete:
+ *     summary: Delete a contact
+ *     tags: [User Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Contact deleted successfully
+ *       404:
+ *         description: Contact not found
+ */
+
 // List all contacts for the logged-in user
 router.get('/', async (req, res) => {
   try {

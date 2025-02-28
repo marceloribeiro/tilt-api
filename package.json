@@ -18,6 +18,9 @@
     "knex": "^3.1.0",
     "nodemon": "^3.0.2",
     "objection": "^3.1.5",
-    "pg": "^8.13.3"
+    "pg": "^8.13.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "twilio": "^5.4.5"
   }
 }

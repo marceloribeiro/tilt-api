@@ -1,7 +1,115 @@
+/**
+ * @swagger
+ * /admin/categories:
+ *   get:
+ *     summary: List all categories
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Category'
+ *
+ *   post:
+ *     summary: Create a new category
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Category created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *
+ * /admin/categories/{id}:
+ *   get:
+ *     summary: Get a specific category
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Category details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *       404:
+ *         description: Category not found
+ *
+ *   patch:
+ *     summary: Update a category
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Category updated
+ *       404:
+ *         description: Category not found
+ *
+ *   delete:
+ *     summary: Delete a category
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Category deleted
+ *       404:
+ *         description: Category not found
+ */
+
 const express = require('express');
 const router = express.Router();
 const Category = require('../../models/category');
 const CategoryPresenter = require('../../presenters/category_presenter');
+
 
 // List all categories
 router.get('/', async (req, res) => {

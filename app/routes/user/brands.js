@@ -1,3 +1,156 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Brand:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The brand ID
+ *         name:
+ *           type: string
+ *           description: Brand name
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *         selected:
+ *           type: boolean
+ *           description: Indicates if the brand is selected by the current user
+ */
+
+/**
+ * @swagger
+ * /user/brands:
+ *   get:
+ *     summary: Get all brands with selection status
+ *     tags: [User Brands]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all brands
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Brand'
+ *       401:
+ *         description: Not authenticated
+ *       400:
+ *         description: Bad request
+ */
+
+/**
+ * @swagger
+ * /user/brands/{id}:
+ *   get:
+ *     summary: Get a specific brand with selection status
+ *     tags: [User Brands]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Brand ID
+ *     responses:
+ *       200:
+ *         description: Brand details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Brand'
+ *       404:
+ *         description: Brand not found
+ *       401:
+ *         description: Not authenticated
+ *       400:
+ *         description: Bad request
+ */
+
+/**
+ * @swagger
+ * /user/brands/select/{id}:
+ *   post:
+ *     summary: Select a brand for the current user
+ *     tags: [User Brands]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Brand ID to select
+ *     responses:
+ *       200:
+ *         description: Brand selected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Brand'
+ *       404:
+ *         description: Brand not found
+ *       400:
+ *         description: Brand already selected or other error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Brand already selected
+ *       401:
+ *         description: Not authenticated
+ */
+
+/**
+ * @swagger
+ * /user/brands/select/{id}:
+ *   delete:
+ *     summary: Deselect a brand for the current user
+ *     tags: [User Brands]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Brand ID to deselect
+ *     responses:
+ *       200:
+ *         description: Brand deselected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Brand'
+ *       404:
+ *         description: Brand not found
+ *       400:
+ *         description: Brand was not selected or other error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Brand was not selected
+ *       401:
+ *         description: Not authenticated
+ */
+
 const express = require('express');
 const router = express.Router();
 const Brand = require('../../models/brand');

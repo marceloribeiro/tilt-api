@@ -1,9 +1,161 @@
+/**
+ * @swagger
+ * /user/categories:
+ *   get:
+ *     summary: Get all categories with selection status
+ *     description: Returns a list of all categories, indicating which ones are selected by the current user
+ *     tags: [User Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of categories with selection status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 allOf:
+ *                   - $ref: '#/components/schemas/Category'
+ *                   - type: object
+ *                     properties:
+ *                       selected:
+ *                         type: boolean
+ *                         description: Indicates if the category is selected by the current user
+ *       401:
+ *         description: Not authenticated
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *
+ * /user/categories/{id}:
+ *   get:
+ *     summary: Get a specific category with selection status
+ *     description: Returns details of a specific category, indicating if it's selected by the current user
+ *     tags: [User Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Category ID
+ *     responses:
+ *       200:
+ *         description: Category details with selection status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Category'
+ *                 - type: object
+ *                   properties:
+ *                     selected:
+ *                       type: boolean
+ *                       description: Indicates if the category is selected by the current user
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *
+ * /user/categories/select/{id}:
+ *   post:
+ *     summary: Select a category for the current user
+ *     description: Creates an association between the current user and the specified category
+ *     tags: [User Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Category ID to select
+ *     responses:
+ *       200:
+ *         description: Category selected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Category'
+ *                 - type: object
+ *                   properties:
+ *                     selected:
+ *                       type: boolean
+ *                       description: Will be true after successful selection
+ *       400:
+ *         description: Category already selected or other error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *
+ *   delete:
+ *     summary: Deselect a category for the current user
+ *     description: Removes the association between the current user and the specified category
+ *     tags: [User Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Category ID to deselect
+ *     responses:
+ *       200:
+ *         description: Category deselected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Category'
+ *                 - type: object
+ *                   properties:
+ *                     selected:
+ *                       type: boolean
+ *                       description: Will be false after successful deselection
+ *       400:
+ *         description: Category was not selected or other error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+
 const express = require('express');
 const router = express.Router();
 const Category = require('../../models/category');
 const CategoryPresenter = require('../../presenters/category_presenter');
 
-// List all categories
 router.get('/', async (req, res) => {
   try {
     const categories = await Category.query();
