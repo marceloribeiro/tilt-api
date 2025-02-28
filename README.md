@@ -1,5 +1,16 @@
 ### Tilt API
 
+## Quick start
+
+```
+git clone git@github.com:marceloribeiro/tilt-api.git
+cd tilt-api
+npm install
+npx knex migrate:latest
+npx knex seed:run
+npm run dev
+```
+
 ## Models, Migrations, and Seeds
 
 ### Migrations
