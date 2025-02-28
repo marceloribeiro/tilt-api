@@ -286,10 +286,10 @@ router.post('/login', async (req, res) => {
 // Signup route
 router.post('/signup', async (req, res) => {
   try {
-    const { user, error } = await userService.createIfNotExists(req.body);
+    const { user, error, code } = await userService.createIfNotExists(req.body);
 
     if (error) {
-      return res.status(400).json({ message: error });
+      return res.status(code || 400).json({ message: error });
     }
 
     res.status(201).json({
@@ -314,10 +314,10 @@ router.get('/me', authenticateToken, async (req, res) => {
 // Update current user route
 router.patch('/me/update', authenticateToken, async (req, res) => {
   try {
-    const { user, error } = await userService.updateUser(req.user.id, req.body);
+    const { user, error, code } = await userService.updateUser(req.user.id, req.body);
 
     if (error) {
-      return res.status(400).json({ message: error });
+      return res.status(code || 400).json({ message: error });
     }
 
     res.json({

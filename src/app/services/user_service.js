@@ -1,12 +1,13 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; // Better to use env variable
+const DEBUG = process.env.DEBUG || true;
 const crypto = require('crypto');
 
 class UserService {
   /**
    * Creates a user if one doesn't exist with the given phone number
-   * @param {Object} user_data - The user data object
+   * @param {{ phone_number: string}} user_data - The user data object
    * @returns {Promise<Object>} - Returns either { user, error: null } or { user: null, error: string }
    */
   async createIfNotExists(user_data) {
@@ -28,7 +29,8 @@ class UserService {
       if (user) {
         return {
           user: null,
-          error: 'User with this phone number already exists'
+          error: 'User with this phone number already exists',
+          code: 409
         };
       }
 
@@ -195,6 +197,21 @@ class UserService {
           user: null,
           error: 'User not found'
         };
+      }
+
+      if (sanitizedData.user_name) {
+        const userNameAlreadyExists = await User.query()
+          .where('user_name', sanitizedData.user_name)
+          .whereNot('id', user_id)
+          .first();
+
+        if (userNameAlreadyExists) {
+          return {
+            code: 409,
+            user: null,
+            error: 'User name already exists'
+          };
+        }
       }
 
       return {
