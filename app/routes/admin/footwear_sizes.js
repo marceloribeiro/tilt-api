@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const FootwearSize = require('../../models/footwear_size');
+const FootwearSizePresenter = require('../../presenters/footwear_size_presenter');
 
 // List all footwear sizes
 router.get('/', async (req, res) => {
   try {
     const sizes = await FootwearSize.query();
-    res.json(sizes);
+    res.json(FootwearSizePresenter.presentMany(sizes));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -19,7 +20,7 @@ router.get('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Footwear size not found' });
     }
-    res.json(size);
+    res.json(FootwearSizePresenter.present(size));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -29,7 +30,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const newSize = await FootwearSize.query().insert(req.body);
-    res.status(201).json(newSize);
+    res.status(201).json(FootwearSizePresenter.present(newSize));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -42,7 +43,7 @@ router.patch('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Footwear size not found' });
     }
-    res.json(size);
+    res.json(FootwearSizePresenter.present(size));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

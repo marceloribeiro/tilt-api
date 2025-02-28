@@ -2,11 +2,16 @@ const express = require('express');
 const router = express.Router();
 require('dotenv').config();
 
-router.get('/', (req, res) => {
-  res.json({
-    message: 'Tilt API',
-    version: process.env.API_VERSION || '1.0.0'  // Fallback version if env var not set
-  });
-});
+// Import all route modules
+const mainRouter = require('./main');
+const authRouter = require('./auth');
+const userRoutes = require('./user');
+const adminRoutes = require('./admin');
+
+// Register routes
+router.use('/', mainRouter);
+router.use('/auth', authRouter);
+router.use('/user', userRoutes);
+router.use('/admin', adminRoutes);
 
 module.exports = router;

@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const Category = require('../../models/category');
+const CategoryPresenter = require('../../presenters/category_presenter');
 
 // List all categories
 router.get('/', async (req, res) => {
   try {
     const categories = await Category.query();
-    res.json(categories);
+    res.json(CategoryPresenter.presentMany(categories));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -19,7 +20,7 @@ router.get('/:id', async (req, res) => {
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
-    res.json(category);
+    res.json(CategoryPresenter.present(category));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -29,7 +30,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const newCategory = await Category.query().insert(req.body);
-    res.status(201).json(newCategory);
+    res.status(201).json(CategoryPresenter.present(newCategory));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -42,7 +43,7 @@ router.patch('/:id', async (req, res) => {
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
-    res.json(category);
+    res.json(CategoryPresenter.present(category));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
