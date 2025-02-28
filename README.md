@@ -5,6 +5,7 @@
 ```
 git clone git@github.com:marceloribeiro/tilt-api.git
 cd tilt-api
+cp .env.sample .env
 npm install
 npx knex migrate:latest
 npx knex seed:run
