@@ -13,7 +13,7 @@ const authenticateToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.query().findOne({
-      id: decoded.userId,
+      id: decoded.user_id,
       jti: decoded.jti
     });
 

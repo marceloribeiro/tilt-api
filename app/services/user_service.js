@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; // Better to use env variable
+const crypto = require('crypto');
 
 class UserService {
   /**
@@ -54,7 +55,7 @@ class UserService {
   #generateToken(user) {
     return jwt.sign(
       {
-        userId: user.id,
+        user_id: user.id,
         jti: user.jti
       },
       JWT_SECRET,
@@ -149,6 +150,25 @@ class UserService {
         token: null,
         error: error.message
       };
+    }
+  }
+
+  /**
+   * Invalidates all existing tokens for a user by updating their jti
+   * @param {number} user_id - The user's ID
+   * @returns {Promise<Object>} - Returns either { success: true } or { error: string }
+   */
+  async logout(user_id) {
+    try {
+      await User.query()
+        .findById(user_id)
+        .patch({
+          jti: crypto.randomBytes(16).toString('hex') // Generate new jti
+        });
+
+      return { success: true };
+    } catch (error) {
+      return { error: error.message };
     }
   }
 }

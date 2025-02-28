@@ -54,8 +54,8 @@ const login = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        phoneNumber: '1234567890',
-        confirmationCode: '123456'
+        phone_number: '1234567890',
+        confirmation_code: '123456'
       })
     });
 
@@ -139,13 +139,28 @@ export const useAuth = () => {
     }
   };
 
-  const login = async (phoneNumber, confirmationCode) => {
+  const login = async (phone_number, confirmation_code) => {
     // Implementation of login logic
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
+  const logout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await fetch('http://your-api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      // Clear token from storage
+      localStorage.removeItem('token');
+
+      // Update application state (e.g., clear user data)
+      setUser(null);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return { user, loading, login, logout };
@@ -182,6 +197,33 @@ Note: You'll need to:
 2. Add a `jti` column to your users table if it doesn't exist
 3. Set up a secure `JWT_SECRET` in your environment variables
 4. Update your User model to include the `jti` field in the schema
+
+### Logout
+
+To logout and invalidate the current token:
+
+```javascript
+// React example
+const logout = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    await fetch('http://your-api/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    // Clear token from storage
+    localStorage.removeItem('token');
+
+    // Update application state (e.g., clear user data)
+    setUser(null);
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
+```
 
 
 
