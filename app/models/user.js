@@ -42,17 +42,6 @@ class User extends Model {
     const hash = this.#hashPassword(password);
     return this.hashed_password === hash;
   }
-
-  // Static method for authentication
-  static async authenticate(email, password) {
-    const user = await this.query().findOne({ email });
-
-    if (!user || !user.verifyPassword(password)) {
-      return null;
-    }
-
-    return user;
-  }
 }
 
 module.exports = User;

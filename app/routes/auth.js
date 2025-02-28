@@ -1,0 +1,48 @@
+const express = require('express');
+const router = express.Router();
+const userService = require('../services/user_service');
+const UserPresenter = require('../presenters/user_presenter');
+const authenticateToken = require('../middleware/auth');
+
+// Login route
+router.post('/login', async (req, res) => {
+  try {
+    const { phone_number, confirmation_code } = req.body;
+    const { user, error } = await userService.loginFromPhone(phone_number, confirmation_code);
+
+    if (error) {
+      return res.status(401).json({ message: error });
+    }
+
+    res.json({
+      user: UserPresenter.present(user)
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Signup route
+router.post('/signup', async (req, res) => {
+  try {
+    const { user, error } = await userService.createIfNotExists(req.body);
+
+    if (error) {
+      return res.status(400).json({ message: error });
+    }
+
+    res.status(201).json({
+      user: UserPresenter.present(user)
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.get('/me', authenticateToken, async (req, res) => {
+  res.json({
+    user: UserPresenter.present(req.user)
+  });
+});
+
+module.exports = router;
