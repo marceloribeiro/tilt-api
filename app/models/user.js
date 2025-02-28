@@ -12,13 +12,16 @@ class User extends Model {
       required: ['phone_number'],
       properties: {
         id: { type: 'integer' },
-        email: { type: 'string' },
-        name: { type: 'string' },
         phone_number: { type: 'string' },
         confirmation_code: { type: 'string' },
         jti: { type: 'string' },
         hashed_password: { type: 'string' },
-        salt: { type: 'string' }
+        salt: { type: 'string' },
+        email: { type: 'string' },
+        user_name: { type: 'string' },
+        first_name: { type: 'string' },
+        last_name: { type: 'string' },
+        referral_code: { type: 'string' }
       }
     };
   }

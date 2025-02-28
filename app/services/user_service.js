@@ -6,12 +6,12 @@ const crypto = require('crypto');
 class UserService {
   /**
    * Creates a user if one doesn't exist with the given phone number
-   * @param {Object} userData - The user data object
+   * @param {Object} user_data - The user data object
    * @returns {Promise<Object>} - Returns either { user, error: null } or { user: null, error: string }
    */
-  async createIfNotExists(userData) {
+  async createIfNotExists(user_data) {
     // Validate phone number presence
-    if (!userData.phone_number) {
+    if (!user_data.phone_number) {
       return {
         user: null,
         error: 'Phone number is required'
@@ -21,7 +21,7 @@ class UserService {
     try {
       // Check if user already exists
       let user = await User.query()
-        .where('phone_number', userData.phone_number)
+        .where('phone_number', user_data.phone_number)
         .first();
 
       // If user exists, return error
@@ -33,7 +33,7 @@ class UserService {
       }
 
       // Create new user if doesn't exist
-      user = await User.query().insert(userData);
+      user = await User.query().insert(user_data);
 
       return {
         user,
@@ -169,6 +169,43 @@ class UserService {
       return { success: true };
     } catch (error) {
       return { error: error.message };
+    }
+  }
+
+  /**
+   * Updates a user's information
+   * @param {number} user_id - The user's ID
+   * @param {Object} user_data - The data to update
+   * @returns {Promise<Object>} - Returns either { user, error: null } or { user: null, error: string }
+   */
+  async updateUser(user_id, user_data) {
+    try {
+      // Remove sensitive fields that shouldn't be updated directly
+      const sanitizedData = { ...user_data };
+      delete sanitizedData.password;
+      delete sanitizedData.jti;
+      delete sanitizedData.is_admin;
+      delete sanitizedData.confirmation_code;
+
+      const user = await User.query()
+        .patchAndFetchById(user_id, sanitizedData);
+
+      if (!user) {
+        return {
+          user: null,
+          error: 'User not found'
+        };
+      }
+
+      return {
+        user,
+        error: null
+      };
+    } catch (error) {
+      return {
+        user: null,
+        error: error.message
+      };
     }
   }
 }

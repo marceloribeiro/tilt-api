@@ -4,9 +4,16 @@ const User = require('../models/user');
 const knex = require('../../config/database');
 const { Model } = require('objection');
 const UserPresenter = require('../presenters/user_presenter');
+const userService = require('../services/user_service');
+const { authenticateToken } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/admin_auth');
 
 // Bind all models to the knex instance
 Model.knex(knex);
+
+// Apply both authentication and admin check to all routes
+router.use(authenticateToken);
+router.use(requireAdmin);
 
 // GET all users
 router.get('/', async (req, res) => {

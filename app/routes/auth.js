@@ -51,6 +51,23 @@ router.get('/me', authenticateToken, async (req, res) => {
   }
 });
 
+// Update current user route
+router.patch('/me/update', authenticateToken, async (req, res) => {
+  try {
+    const { user, error } = await userService.updateUser(req.user.id, req.body);
+
+    if (error) {
+      return res.status(400).json({ message: error });
+    }
+
+    res.json({
+      user: UserPresenter.present(user)
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 // Logout route
 router.delete('/logout', authenticateToken, async (req, res) => {
   try {
