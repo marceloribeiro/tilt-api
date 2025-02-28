@@ -6,7 +6,8 @@ const StylePresenter = require('../../presenters/style_presenter');
 router.get('/', async (req, res) => {
   try {
     const styles = await Style.query();
-    res.json(StylePresenter.presentMany(styles));
+    const presentedStyles = await StylePresenter.presentMany(styles, req.user);
+    res.json(presentedStyles);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -18,7 +19,8 @@ router.get('/:id', async (req, res) => {
     if (!style) {
       return res.status(404).json({ message: 'Style not found' });
     }
-    res.json(StylePresenter.present(style));
+    const presentedStyle = await StylePresenter.present(style, req.user);
+    res.json(presentedStyle);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

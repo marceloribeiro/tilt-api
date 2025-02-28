@@ -17,6 +17,25 @@ class Style extends Model {
       }
     };
   }
+
+  static get relationMappings() {
+    const User = require('./user');
+
+    return {
+      users: {
+        relation: Model.ManyToManyRelation,
+        modelClass: User,
+        join: {
+          from: 'styles.id',
+          through: {
+            from: 'users_styles.style_id',
+            to: 'users_styles.user_id'
+          },
+          to: 'users.id'
+        }
+      }
+    };
+  }
 }
 
 module.exports = Style;

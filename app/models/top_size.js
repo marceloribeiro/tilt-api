@@ -17,6 +17,25 @@ class TopSize extends Model {
       }
     };
   }
+
+  static get relationMappings() {
+    const User = require('./user');
+
+    return {
+      users: {
+        relation: Model.ManyToManyRelation,
+        modelClass: User,
+        join: {
+          from: 'top_sizes.id',
+          through: {
+            from: 'users_top_sizes.top_size_id',
+            to: 'users_top_sizes.user_id'
+          },
+          to: 'users.id'
+        }
+      }
+    };
+  }
 }
 
 module.exports = TopSize;

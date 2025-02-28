@@ -7,7 +7,8 @@ const CategoryPresenter = require('../../presenters/category_presenter');
 router.get('/', async (req, res) => {
   try {
     const categories = await Category.query();
-    res.json(CategoryPresenter.presentMany(categories));
+    const presentedCategories = await CategoryPresenter.presentMany(categories, req.user);
+    res.json(presentedCategories);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -20,7 +21,8 @@ router.get('/:id', async (req, res) => {
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
-    res.json(CategoryPresenter.present(category));
+    const presentedCategory = await CategoryPresenter.present(category, req.user);
+    res.json(presentedCategory);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

@@ -17,6 +17,25 @@ class Brand extends Model {
       }
     };
   }
+
+  static get relationMappings() {
+    const User = require('./user');
+
+    return {
+      users: {
+        relation: Model.ManyToManyRelation,
+        modelClass: User,
+        join: {
+          from: 'brands.id',
+          through: {
+            from: 'users_brands.brand_id',
+            to: 'users_brands.user_id'
+          },
+          to: 'users.id'
+        }
+      }
+    };
+  }
 }
 
 module.exports = Brand;

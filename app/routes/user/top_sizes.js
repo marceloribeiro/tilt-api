@@ -6,7 +6,8 @@ const TopSizePresenter = require('../../presenters/top_size_presenter');
 router.get('/', async (req, res) => {
   try {
     const sizes = await TopSize.query();
-    res.json(TopSizePresenter.presentMany(sizes));
+    const presentedSizes = await TopSizePresenter.presentMany(sizes, req.user);
+    res.json(presentedSizes);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -18,7 +19,8 @@ router.get('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Top size not found' });
     }
-    res.json(TopSizePresenter.present(size));
+    const presentedSize = await TopSizePresenter.present(size, req.user);
+    res.json(presentedSize);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

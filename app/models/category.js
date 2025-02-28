@@ -17,6 +17,25 @@ class Category extends Model {
       }
     };
   }
+
+  static get relationMappings() {
+    const User = require('./user');
+
+    return {
+      users: {
+        relation: Model.ManyToManyRelation,
+        modelClass: User,
+        join: {
+          from: 'categories.id',
+          through: {
+            from: 'users_categories.category_id',
+            to: 'users_categories.user_id'
+          },
+          to: 'users.id'
+        }
+      }
+    };
+  }
 }
 
 module.exports = Category;

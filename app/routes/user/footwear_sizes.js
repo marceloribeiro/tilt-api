@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const FootwearSize = require('../../models/footwear_size');
+const FootwearSizePresenter = require('../../presenters/footwear_size_presenter');
 
 // List all footwear sizes
 router.get('/', async (req, res) => {
   try {
     const sizes = await FootwearSize.query();
-    res.json(sizes);
+    const presentedSizes = await FootwearSizePresenter.presentMany(sizes, req.user);
+    res.json(presentedSizes);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -19,7 +21,8 @@ router.get('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Footwear size not found' });
     }
-    res.json(size);
+    const presentedSize = await FootwearSizePresenter.present(size, req.user);
+    res.json(presentedSize);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
