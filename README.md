@@ -120,3 +120,17 @@ exports.seed = async function(knex) {
   ]);
 };
 ```
+
+## Running tests
+
+1. Running a single test file
+
+```
+npm test -- tests/routes/auth.test.js
+```
+
+2. Running a single test within the file
+
+```
+npm test -- tests/routes/auth.test.js -t "should send confirmation code to valid phone number"
+```

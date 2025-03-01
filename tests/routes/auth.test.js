@@ -1,6 +1,19 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const Factory = require('../factories');
+const User = require('../../src/app/models/user');
+
+// Mock twilio to avoid sending actual SMS
+jest.mock('twilio', () => {
+  return jest.fn(() => ({
+    messages: {
+      create: jest.fn().mockResolvedValue({
+        sid: 'mock-sid',
+        status: 'success'
+      })
+    }
+  }));
+});
 
 let server;
 
@@ -8,20 +21,23 @@ beforeAll(() => {
   server = app.listen(4001);
 });
 
+
 afterAll((done) => {
   server.close(done);
 });
 
 describe('Auth endpoints', () => {
   let authToken;
-  const testPhone = '+1234567890';
-  const testCode = '123456';
 
   describe('POST /auth/send_confirmation_code', () => {
     it('should send confirmation code to valid phone number', async () => {
+      var phoneNumber = '+1234567890';
+      await User.query().delete().where('phone_number', phoneNumber);
+      await Factory.createUser({ phone_number: phoneNumber });
+
       const response = await request(app)
         .post('/auth/send_confirmation_code')
-        .send({ phone_number: testPhone })
+        .send({ phone_number: phoneNumber })
         .expect('Content-Type', /json/)
         .expect(200);
 
@@ -41,10 +57,13 @@ describe('Auth endpoints', () => {
 
   describe('POST /auth/signup', () => {
     it('should create a new user', async () => {
+      var phoneNumber = '+1234567890';
+      await User.query().delete().where('phone_number', phoneNumber);
+
       const response = await request(app)
         .post('/auth/signup')
         .send({
-          phone_number: testPhone,
+          phone_number: phoneNumber,
           email: 'test@example.com',
           user_name: 'testuser',
           first_name: 'Test',
@@ -54,7 +73,7 @@ describe('Auth endpoints', () => {
         .expect(201);
 
       expect(response.body).toHaveProperty('user');
-      expect(response.body.user).toHaveProperty('phone_number', testPhone);
+      expect(response.body.user).toHaveProperty('phone_number', phoneNumber);
     });
 
     it('should return 400 if phone_number is missing', async () => {
@@ -72,30 +91,32 @@ describe('Auth endpoints', () => {
   });
 
   describe('POST /auth/login', () => {
-    it('should login with valid credentials', async () => {
-      // Create a test user with known credentials
-      const user = await Factory.createUser({
-        phone_number: '+1234567890',
-        confirmation_code: '123456'
-      });
+    var phoneNumber = '+1234567890';
+    var confirmationCode = '123456';
 
+    beforeEach(async () => {
+      await User.query().delete().where('phone_number', phoneNumber);
+      await Factory.createUser({ phone_number: phoneNumber, confirmation_code: confirmationCode });
+    });
+
+    it('should login with valid credentials', async () => {
       const response = await request(app)
         .post('/auth/login')
         .send({
-          phone_number: user.phone_number,
-          confirmation_code: '123456'
+          phone_number: phoneNumber,
+          confirmation_code: confirmationCode
         })
         .expect(200);
 
       expect(response.body).toHaveProperty('token');
-      expect(response.body.user).toHaveProperty('phone_number', user.phone_number);
+      expect(response.body.user).toHaveProperty('phone_number', phoneNumber);
     });
 
     it('should return 401 for invalid credentials', async () => {
       const response = await request(app)
         .post('/auth/login')
         .send({
-          phone_number: testPhone,
+          phone_number: phoneNumber,
           confirmation_code: 'wrong-code'
         })
         .expect('Content-Type', /json/)

@@ -7,7 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "console": "node src/scripts/console.js",
-    "test": "NODE_ENV=test jest --setupFilesAfterEnv='<rootDir>/tests/setup.js'"
+    "test": "NODE_ENV=test jest"
   },
   "keywords": [],
   "author": "",
