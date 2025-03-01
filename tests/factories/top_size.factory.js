@@ -3,10 +3,8 @@ const TopSize = require('../../src/app/models/top_size');
 
 class TopSizeFactory {
   static async createTopSize(overrides = {}) {
-    const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-
     const defaultAttributes = {
-      name: faker.helpers.arrayElement(sizes)
+      name: faker.helpers.arrayElement(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
     };
 
     return await TopSize.query().insert({

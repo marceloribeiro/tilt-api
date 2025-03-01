@@ -4,13 +4,16 @@ const UserFactory = require('./user.factory');
 
 class ContactFactory {
   static async createContact(overrides = {}) {
-    const user = overrides.user_id ? null : await UserFactory.createUser();
+    if (!overrides.user_id) {
+      const user = await UserFactory.createUser();
+      overrides.user_id = user.id;
+    }
 
     const defaultAttributes = {
-      user_id: user ? user.id : overrides.user_id,
       name: faker.person.fullName(),
-      phone_number: faker.phone.number('+1##########'),
       email: faker.internet.email(),
+      phone_number: faker.phone.number('+1##########'),
+      user_id: overrides.user_id
     };
 
     return await Contact.query().insert({

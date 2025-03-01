@@ -133,7 +133,7 @@ router.use(requireAdmin);
 router.get('/', async (req, res) => {
   try {
     const users = await User.query();
-    res.json(UserPresenter.presentMany(users));
+    res.json({ users: UserPresenter.presentMany(users) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -146,7 +146,7 @@ router.get('/:id', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(UserPresenter.present(user));
+    res.json({ user: UserPresenter.present(user) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -155,9 +155,8 @@ router.get('/:id', async (req, res) => {
 // POST create new user
 router.post('/', async (req, res) => {
   try {
-    console.log(req.body);
     const newUser = await User.query().insert(req.body);
-    res.status(201).json(UserPresenter.present(newUser));
+    res.status(201).json({ user: UserPresenter.present(newUser) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -173,7 +172,7 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(UserPresenter.present(updatedUser));
+    res.json({ user: UserPresenter.present(updatedUser) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -189,7 +188,7 @@ router.patch('/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(UserPresenter.present(updatedUser));
+    res.json({ user: UserPresenter.present(updatedUser) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -204,7 +203,7 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json({ message: 'User deleted' });
+    res.status(204).json({ message: 'User deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

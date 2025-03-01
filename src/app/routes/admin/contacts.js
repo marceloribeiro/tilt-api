@@ -161,7 +161,7 @@ const ContactPresenter = require('../../presenters/contact_presenter');
 router.get('/', async (req, res) => {
   try {
     const contacts = await Contact.query().withGraphFetched('user');
-    res.json(await ContactPresenter.presentMany(contacts));
+    res.json({ contacts: await ContactPresenter.presentMany(contacts) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -178,7 +178,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
-    res.json(ContactPresenter.present(contact));
+    res.json({ contact: ContactPresenter.present(contact) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -192,7 +192,7 @@ router.post('/', async (req, res) => {
       .findById(newContact.id)
       .withGraphFetched('user');
 
-    res.status(201).json(ContactPresenter.present(contact));
+    res.status(201).json({ contact: ContactPresenter.present(contact) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -209,7 +209,23 @@ router.patch('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
-    res.json(ContactPresenter.present(contact));
+    res.json({ contact: ContactPresenter.present(contact) });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const contact = await Contact.query()
+      .updateAndFetchById(req.params.id, req.body)
+      .withGraphFetched('user');
+
+    if (!contact) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+
+    res.json({ contact: ContactPresenter.present(contact) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

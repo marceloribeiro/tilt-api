@@ -144,7 +144,7 @@ const FootwearSizePresenter = require('../../presenters/footwear_size_presenter'
 router.get('/', async (req, res) => {
   try {
     const sizes = await FootwearSize.query();
-    res.json(await FootwearSizePresenter.presentMany(sizes));
+    res.json({ footwear_sizes: await FootwearSizePresenter.presentMany(sizes) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -157,7 +157,7 @@ router.get('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Footwear size not found' });
     }
-    res.json(FootwearSizePresenter.present(size));
+    res.json({ footwear_size: FootwearSizePresenter.present(size) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -167,7 +167,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const newSize = await FootwearSize.query().insert(req.body);
-    res.status(201).json(FootwearSizePresenter.present(newSize));
+    res.status(201).json({ footwear_size: FootwearSizePresenter.present(newSize) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -180,7 +180,20 @@ router.patch('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Footwear size not found' });
     }
-    res.json(FootwearSizePresenter.present(size));
+    res.json({ footwear_size: FootwearSizePresenter.present(size) });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Update footwear size
+router.put('/:id', async (req, res) => {
+  try {
+    const size = await FootwearSize.query().updateAndFetchById(req.params.id, req.body);
+    if (!size) {
+      return res.status(404).json({ message: 'Footwear size not found' });
+    }
+    res.json({ footwear_size: FootwearSizePresenter.present(size) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

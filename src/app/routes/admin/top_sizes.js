@@ -117,12 +117,13 @@
 const express = require('express');
 const router = express.Router();
 const TopSize = require('../../models/top_size');
+const TopSizePresenter = require('../../presenters/top_size_presenter');
 
 // List all top sizes
 router.get('/', async (req, res) => {
   try {
     const sizes = await TopSize.query();
-    res.json(sizes);
+    res.json({ top_sizes: await TopSizePresenter.presentMany(sizes) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -135,7 +136,7 @@ router.get('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Top size not found' });
     }
-    res.json(size);
+    res.json({ top_size: TopSizePresenter.present(size) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -145,7 +146,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const newSize = await TopSize.query().insert(req.body);
-    res.status(201).json(newSize);
+    res.status(201).json({ top_size: TopSizePresenter.present(newSize) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -158,7 +159,20 @@ router.patch('/:id', async (req, res) => {
     if (!size) {
       return res.status(404).json({ message: 'Top size not found' });
     }
-    res.json(size);
+    res.json({ top_size: TopSizePresenter.present(size) });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Update top size
+router.put('/:id', async (req, res) => {
+  try {
+    const size = await TopSize.query().updateAndFetchById(req.params.id, req.body);
+    if (!size) {
+      return res.status(404).json({ message: 'Top size not found' });
+    }
+    res.json({ top_size: TopSizePresenter.present(size) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

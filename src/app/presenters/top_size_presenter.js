@@ -1,34 +1,18 @@
 class TopSizePresenter {
-  static present(size, user = null, userSizes = null) {
+  static present(topSize) {
+    if (!topSize) return null;
+
     return {
-      id: size.id,
-      name: size.name,
-      created_at: size.created_at,
-      updated_at: size.updated_at,
-      selected: this.#isSelected(size, user, userSizes)
+      id: topSize.id,
+      name: topSize.name,
+      created_at: topSize.created_at,
+      updated_at: topSize.updated_at
     };
   }
 
-  static async presentMany(sizes, user = null) {
-    if (!user) {
-      return sizes.map(size => this.present(size));
-    }
-
-    const userSizes = await user.$relatedQuery('top_sizes');
-    return sizes.map(size => this.present(size, user, userSizes));
-  }
-
-  static #isSelected(size, user, userSizes = null) {
-    if (!user) return false;
-
-    if (userSizes) {
-      return userSizes.some(userSize => userSize.id === size.id);
-    }
-
-    return user.$relatedQuery('top_sizes')
-      .where('top_sizes.id', size.id)
-      .first()
-      .then(result => !!result);
+  static presentMany(topSizes) {
+    if (!topSizes) return [];
+    return topSizes.map(this.present);
   }
 }
 

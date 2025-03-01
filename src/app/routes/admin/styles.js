@@ -184,7 +184,7 @@ router.get('/', async (req, res) => {
   try {
     const styles = await Style.query();
     const presentedStyles = await StylePresenter.presentMany(styles);
-    res.json(presentedStyles);
+    res.json({ styles: presentedStyles });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -198,7 +198,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Style not found' });
     }
     const presentedStyle = await StylePresenter.present(style);
-    res.json(presentedStyle);
+    res.json({ style: presentedStyle });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -209,7 +209,7 @@ router.post('/', async (req, res) => {
   try {
     const newStyle = await Style.query().insert(req.body);
     const presentedStyle = await StylePresenter.present(newStyle);
-    res.status(201).json(presentedStyle);
+    res.status(201).json({ style: presentedStyle });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -223,7 +223,20 @@ router.patch('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Style not found' });
     }
     const presentedStyle = await StylePresenter.present(style);
-    res.json(presentedStyle);
+    res.json({ style: presentedStyle });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const style = await Style.query().updateAndFetchById(req.params.id, req.body);
+    if (!style) {
+      return res.status(404).json({ message: 'Style not found' });
+    }
+    const presentedStyle = await StylePresenter.present(style);
+    res.json({ style: presentedStyle });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

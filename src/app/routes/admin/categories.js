@@ -115,7 +115,7 @@ const CategoryPresenter = require('../../presenters/category_presenter');
 router.get('/', async (req, res) => {
   try {
     const categories = await Category.query();
-    res.json(await CategoryPresenter.presentMany(categories));
+    res.json({ categories: await CategoryPresenter.presentMany(categories) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -128,7 +128,7 @@ router.get('/:id', async (req, res) => {
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
-    res.json(CategoryPresenter.present(category));
+    res.json({ category: CategoryPresenter.present(category) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -138,7 +138,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const newCategory = await Category.query().insert(req.body);
-    res.status(201).json(CategoryPresenter.present(newCategory));
+    res.status(201).json({ category: CategoryPresenter.present(newCategory) } );
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -151,7 +151,19 @@ router.patch('/:id', async (req, res) => {
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
-    res.json(CategoryPresenter.present(category));
+    res.json({ category: CategoryPresenter.present(category) });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const category = await Category.query().updateAndFetchById(req.params.id, req.body);
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+    res.json({ category: CategoryPresenter.present(category) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
