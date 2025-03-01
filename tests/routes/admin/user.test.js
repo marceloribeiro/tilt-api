@@ -12,7 +12,7 @@ let regularUser;
 let regularToken;
 
 beforeAll(async () => {
-  server = app.listen(4008);
+  server = app.listen(4000);
   await User.query().delete();
   adminUser = await UserFactory.createUser({ is_admin: true, jti: '123456' });
   adminToken = generateTestToken(adminUser);

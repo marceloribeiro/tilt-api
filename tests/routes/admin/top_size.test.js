@@ -13,7 +13,7 @@ let regularUser;
 let regularToken;
 
 beforeAll(async () => {
-  server = app.listen(4007);
+  server = app.listen(4000);
   adminUser = await UserFactory.createUser({ is_admin: true, jti: '123456' });
   adminToken = generateTestToken(adminUser);
   regularUser = await UserFactory.createUser({ is_admin: false, jti: '123456' });
