@@ -11,7 +11,6 @@ exports.up = function(knex) {
 
       table.foreign('user_id').references('users.id').onDelete('CASCADE');
       table.foreign('room_id').references('rooms.id').onDelete('CASCADE');
-      table.unique(['user_id', 'room_id']);
     })
 };
 

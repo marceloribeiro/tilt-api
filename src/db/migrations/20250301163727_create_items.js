@@ -2,21 +2,21 @@ exports.up = function(knex) {
   return knex.schema
     .createTable('items', table => {
       table.increments('id').primary();
-      table.integer('owner_id').unsigned().notNullable();
-      table.integer('category_id').unsigned().notNullable();
-      table.integer('brand_id').unsigned().notNullable();
-      table.integer('style_id').unsigned().notNullable();
-      table.integer('footwear_size_id').unsigned().notNullable();
-      table.integer('top_size_id').unsigned().notNullable();
-      table.string('name').notNullable();
-      table.string('description').notNullable();
-      table.string('image_url').notNullable();
-      table.string('location').notNullable();
-      table.float('latitude').notNullable();
-      table.float('longitude').notNullable();
-      table.string('status').notNullable();
-      table.float('price').notNullable();
-      table.string('currency').notNullable();
+      table.integer('owner_id').unsigned().nullable();
+      table.integer('category_id').unsigned().nullable();
+      table.integer('brand_id').unsigned().nullable();
+      table.integer('style_id').unsigned().nullable();
+      table.integer('footwear_size_id').unsigned().nullable();
+      table.integer('top_size_id').unsigned().nullable();
+      table.string('name').nullable();
+      table.string('description').nullable();
+      table.string('image_url').nullable();
+      table.string('location').nullable();
+      table.float('latitude').nullable();
+      table.float('longitude').nullable();
+      table.string('status').nullable();
+      table.float('price').nullable();
+      table.string('currency').nullable();
       table.timestamps(true, true);
 
       table.foreign('owner_id').references('users.id').onDelete('CASCADE');
