@@ -124,7 +124,7 @@ const BrandPresenter = require('../../presenters/brand_presenter');
 router.get('/', async (req, res) => {
   try {
     const brands = await Brand.query();
-    res.json(await BrandPresenter.presentMany(brands));
+    res.json({ brands: await BrandPresenter.presentMany(brands) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -137,7 +137,7 @@ router.get('/:id', async (req, res) => {
     if (!brand) {
       return res.status(404).json({ message: 'Brand not found' });
     }
-    res.json(BrandPresenter.present(brand));
+    res.json({ brand: BrandPresenter.present(brand) } );
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -147,7 +147,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const newBrand = await Brand.query().insert(req.body);
-    res.status(201).json(BrandPresenter.present(newBrand));
+    res.status(201).json({ brand: BrandPresenter.present(newBrand) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -160,7 +160,19 @@ router.patch('/:id', async (req, res) => {
     if (!brand) {
       return res.status(404).json({ message: 'Brand not found' });
     }
-    res.json(BrandPresenter.present(brand));
+    res.json({ brand: BrandPresenter.present(brand) } );
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const brand = await Brand.query().updateAndFetchById(req.params.id, req.body);
+    if (!brand) {
+      return res.status(404).json({ message: 'Brand not found' });
+    }
+    res.json({ brand: BrandPresenter.present(brand) } );
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../../src/app');
-const Factory = require('../factories');
+const UserFactory = require('../factories/user.factory');
 const User = require('../../src/app/models/user');
 const { generateTestToken } = require('../helpers/auth');
 const knex = require('../../src/config/database');
@@ -37,7 +37,7 @@ describe('Auth endpoints', () => {
     it('should send confirmation code to valid phone number', async () => {
       var phoneNumber = '+1234567890';
       await User.query().delete().where('phone_number', phoneNumber);
-      await Factory.createUser({ phone_number: phoneNumber });
+      await UserFactory.createUser({ phone_number: phoneNumber });
 
       const response = await request(app)
         .post('/auth/send_confirmation_code')
@@ -100,7 +100,7 @@ describe('Auth endpoints', () => {
 
     beforeEach(async () => {
       await User.query().delete().where('phone_number', phoneNumber);
-      await Factory.createUser({ phone_number: phoneNumber, confirmation_code: confirmationCode });
+      await UserFactory.createUser({ phone_number: phoneNumber, confirmation_code: confirmationCode });
     });
 
     it('should login with valid credentials', async () => {
@@ -132,7 +132,7 @@ describe('Auth endpoints', () => {
 
   describe('GET /auth/me', () => {
     it('should return user profile', async () => {
-      const user = await Factory.createUser({ jti: '123456' });
+      const user = await UserFactory.createUser({ jti: '123456' });
       const token = generateTestToken(user);
 
       const response = await request(app)
@@ -152,7 +152,7 @@ describe('Auth endpoints', () => {
 
   describe('PATCH /auth/me/update', () => {
     it('should update user profile when authenticated', async () => {
-      const user = await Factory.createUser({ jti: '123456' });
+      const user = await UserFactory.createUser({ jti: '123456' });
       const token = generateTestToken(user);
 
       const response = await request(app)
@@ -182,7 +182,7 @@ describe('Auth endpoints', () => {
 
   describe('DELETE /auth/logout', () => {
     it('should logout successfully when authenticated', async () => {
-      const user = await Factory.createUser({ jti: '123456' });
+      const user = await UserFactory.createUser({ jti: '123456' });
       const token = generateTestToken(user);
 
       const response = await request(app)

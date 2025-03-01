@@ -1,35 +1,19 @@
-const { faker } = require('@faker-js/faker');
-const User = require('../../src/app/models/user');
+const UserFactory = require('./user.factory');
+const ContactFactory = require('./contact.factory');
+const BrandFactory = require('./brand.factory');
+const FootwearSizeFactory = require('./footwear_size.factory');
+const TopSizeFactory = require('./top_size.factory');
+const StyleFactory = require('./style.factory');
+const CategoryFactory = require('./category.factory');
 
 class Factory {
-  static async createUser(overrides = {}) {
-    const defaultAttributes = {
-      phone_number: faker.phone.number('+1##########'),
-      email: faker.internet.email(),
-      user_name: faker.internet.username(),
-      first_name: faker.person.firstName(),
-      last_name: faker.person.lastName(),
-      confirmation_code: '123456' // Default test confirmation code
-    };
-
-    return await User.query().insert({
-      ...defaultAttributes,
-      ...overrides
-    });
-  }
-
-  static async createUserWithProfile(overrides = {}) {
-    const user = await this.createUser(overrides);
-    // const profile = await Profile.query().insert({
-    //   user_id: user.id,
-    //   bio: faker.lorem.paragraph(),
-    //   // ... other profile fields
-    // });
-    const profile = null;
-    return { user, profile };
-  }
-
-  // Add more factory methods for other models
+  static UserFactory = UserFactory;
+  static ContactFactory = ContactFactory;
+  static BrandFactory = BrandFactory;
+  static FootwearSizeFactory = FootwearSizeFactory;
+  static TopSizeFactory = TopSizeFactory;
+  static StyleFactory = StyleFactory;
+  static CategoryFactory = CategoryFactory;
 }
 
 module.exports = Factory;
