@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require('../../src/app');
 const Factory = require('../factories');
 const User = require('../../src/app/models/user');
+const { generateTestToken } = require('../helpers/auth');
+const knex = require('../../src/config/database');
 
 // Mock twilio to avoid sending actual SMS
 jest.mock('twilio', () => {
@@ -21,14 +23,16 @@ beforeAll(() => {
   server = app.listen(4001);
 });
 
-
-afterAll((done) => {
-  server.close(done);
+afterAll(async () => {
+  await new Promise((resolve) => {
+    server.close(() => {
+      resolve();
+    });
+  });
+  await knex.destroy();
 });
 
 describe('Auth endpoints', () => {
-  let authToken;
-
   describe('POST /auth/send_confirmation_code', () => {
     it('should send confirmation code to valid phone number', async () => {
       var phoneNumber = '+1234567890';
@@ -128,8 +132,7 @@ describe('Auth endpoints', () => {
 
   describe('GET /auth/me', () => {
     it('should return user profile', async () => {
-      const user = await Factory.createUser();
-      // You'll need to generate a valid token here
+      const user = await Factory.createUser({ jti: '123456' });
       const token = generateTestToken(user);
 
       const response = await request(app)
@@ -149,9 +152,12 @@ describe('Auth endpoints', () => {
 
   describe('PATCH /auth/me/update', () => {
     it('should update user profile when authenticated', async () => {
+      const user = await Factory.createUser({ jti: '123456' });
+      const token = generateTestToken(user);
+
       const response = await request(app)
         .patch('/auth/me/update')
-        .set('Authorization', `Bearer ${authToken}`)
+        .set('Authorization', `Bearer ${token}`)
         .send({
           first_name: 'Updated',
           last_name: 'Name'
@@ -176,9 +182,12 @@ describe('Auth endpoints', () => {
 
   describe('DELETE /auth/logout', () => {
     it('should logout successfully when authenticated', async () => {
+      const user = await Factory.createUser({ jti: '123456' });
+      const token = generateTestToken(user);
+
       const response = await request(app)
         .delete('/auth/logout')
-        .set('Authorization', `Bearer ${authToken}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(200);
 

@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; // Better to use env variable
+const JWT_SECRET = process.env.JWT_SECRET;
 const DEBUG = process.env.DEBUG || true;
 const crypto = require('crypto');
 
