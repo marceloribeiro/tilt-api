@@ -134,10 +134,7 @@ router.post('/select/:id', async (req, res) => {
     const presentedSize = await FootwearSizePresenter.present(size, req.user, userSizes);
     res.json(presentedSize);
   } catch (err) {
-    if (err.code === '23505') {
-      return res.status(400).json({ message: 'Footwear size already selected' });
-    }
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: 'Footwear size already selected' });
   }
 });
 

@@ -198,11 +198,7 @@ router.post('/select/:id', async (req, res) => {
     const presentedCategory = await CategoryPresenter.present(category, req.user, userCategories);
     res.json(presentedCategory);
   } catch (err) {
-    // Handle unique constraint violation
-    if (err.code === '23505') { // PostgreSQL unique constraint violation
-      return res.status(400).json({ message: 'Category already selected' });
-    }
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: 'Category already selected' });
   }
 });
 

@@ -161,7 +161,7 @@ router.get('/', async (req, res) => {
   try {
     const brands = await Brand.query();
     const presentedBrands = await BrandPresenter.presentMany(brands, req.user);
-    res.json(presentedBrands);
+    res.json({ brands: presentedBrands });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -177,7 +177,7 @@ router.get('/:id', async (req, res) => {
 
     const userBrands = await req.user.$relatedQuery('brands');
     const presentedBrand = await BrandPresenter.present(brand, req.user, userBrands);
-    res.json(presentedBrand);
+    res.json({ brand: presentedBrand });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -194,12 +194,9 @@ router.post('/select/:id', async (req, res) => {
 
     const userBrands = await req.user.$relatedQuery('brands');
     const presentedBrand = await BrandPresenter.present(brand, req.user, userBrands);
-    res.json(presentedBrand);
+    res.json({ brand: presentedBrand });
   } catch (err) {
-    if (err.code === '23505') {
-      return res.status(400).json({ message: 'Brand already selected' });
-    }
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: 'Brand already selected' });
   }
 });
 
@@ -221,7 +218,7 @@ router.delete('/select/:id', async (req, res) => {
 
     const userBrands = await req.user.$relatedQuery('brands');
     const presentedBrand = await BrandPresenter.present(brand, req.user, userBrands);
-    res.json(presentedBrand);
+    res.json({ brand: presentedBrand });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

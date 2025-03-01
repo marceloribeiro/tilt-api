@@ -131,7 +131,7 @@ router.get('/', async (req, res) => {
       .$relatedQuery('contacts')
       .orderBy('name');
 
-    res.json(ContactPresenter.presentMany(contacts));
+    res.json({ contacts: ContactPresenter.presentMany(contacts) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -148,7 +148,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
-    res.json(ContactPresenter.present(contact));
+    res.json({ contact: ContactPresenter.present(contact) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -164,7 +164,7 @@ router.post('/', async (req, res) => {
     };
 
     const contact = await Contact.query().insert(contactData);
-    res.status(201).json(ContactPresenter.present(contact));
+    res.status(201).json({ contact: ContactPresenter.present(contact) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -187,7 +187,30 @@ router.patch('/:id', async (req, res) => {
       .$relatedQuery('contacts')
       .patchAndFetchById(req.params.id, req.body);
 
-    res.json(ContactPresenter.present(updatedContact));
+    res.json({ contact: ContactPresenter.present(updatedContact) });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Update a contact
+router.put('/:id', async (req, res) => {
+  try {
+    // First verify the contact belongs to the user
+    const contact = await req.user
+      .$relatedQuery('contacts')
+      .findById(req.params.id);
+
+    if (!contact) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+
+    // Update the contact
+    const updatedContact = await req.user
+      .$relatedQuery('contacts')
+      .updateAndFetchById(req.params.id, { ...req.body, user_id: req.user.id });
+
+    res.json({ contact: ContactPresenter.present(updatedContact) });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

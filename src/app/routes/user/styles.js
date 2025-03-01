@@ -131,10 +131,7 @@ router.post('/select/:id', async (req, res) => {
     const presentedStyle = await StylePresenter.present(style, req.user, userStyles);
     res.json(presentedStyle);
   } catch (err) {
-    if (err.code === '23505') {
-      return res.status(400).json({ message: 'Style already selected' });
-    }
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: 'Style already selected' });
   }
 });
 
