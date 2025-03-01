@@ -5,14 +5,13 @@ const User = require('../../../src/app/models/user');
 const { generateTestToken } = require('../../helpers/auth');
 const knex = require('../../../src/config/database');
 const { faker } = require('@faker-js/faker');
-let server;
+
 let adminUser;
 let adminToken;
 let regularUser;
 let regularToken;
 
 beforeAll(async () => {
-  server = app.listen(4000);
   await User.query().delete();
   adminUser = await UserFactory.createUser({ is_admin: true, jti: '123456' });
   adminToken = generateTestToken(adminUser);
@@ -20,13 +19,8 @@ beforeAll(async () => {
   regularToken = generateTestToken(regularUser);
 });
 
-afterAll(async () => {
-  await new Promise((resolve) => {
-    server.close(() => {
-      resolve();
-    });
-  });
-  await knex.destroy();
+afterAll(() => {
+  knex.destroy();
 });
 
 describe('Admin User Routes', () => {

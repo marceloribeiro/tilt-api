@@ -5,25 +5,18 @@ const { StyleFactory } = require('../../factories');
 const { generateTestToken } = require('../../helpers/auth');
 const knex = require('../../../src/config/database');
 
-let server;
 let user;
 let token;
 let style;
 
 beforeAll(async () => {
-  server = app.listen(4000);
   user = await UserFactory.createUser({ is_admin: false, jti: '123456' });
   token = generateTestToken(user);
   style = await StyleFactory.createStyle();
 });
 
-afterAll(async () => {
-  await new Promise((resolve) => {
-    server.close(() => {
-      resolve();
-    });
-  });
-  await knex.destroy();
+afterAll(() => {
+  knex.destroy();
 });
 
 describe('Style Routes', () => {

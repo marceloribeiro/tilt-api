@@ -6,27 +6,20 @@ const Style = require('../../../src/app/models/style');
 const { generateTestToken } = require('../../helpers/auth');
 const knex = require('../../../src/config/database');
 
-let server;
 let adminUser;
 let adminToken;
 let regularUser;
 let regularToken;
 
 beforeAll(async () => {
-  server = app.listen(4000);
   adminUser = await UserFactory.createUser({ is_admin: true, jti: '123456' });
   adminToken = generateTestToken(adminUser);
   regularUser = await UserFactory.createUser({ is_admin: false, jti: '123456' });
   regularToken = generateTestToken(regularUser);
 });
 
-afterAll(async () => {
-  await new Promise((resolve) => {
-    server.close(() => {
-      resolve();
-    });
-  });
-  await knex.destroy();
+afterAll(() => {
+  knex.destroy();
 });
 
 describe('Admin Style Routes', () => {

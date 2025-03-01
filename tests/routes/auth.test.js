@@ -17,19 +17,8 @@ jest.mock('twilio', () => {
   }));
 });
 
-let server;
-
-beforeAll(() => {
-  server = app.listen(4001);
-});
-
-afterAll(async () => {
-  await new Promise((resolve) => {
-    server.close(() => {
-      resolve();
-    });
-  });
-  await knex.destroy();
+afterAll(() => {
+  knex.destroy();
 });
 
 describe('Auth endpoints', () => {
