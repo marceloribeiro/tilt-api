@@ -32,7 +32,7 @@ afterAll(() => {
 });
 
 describe('Admin Auction Bid Routes', () => {
-  describe('GET /admin/auction-bids', () => {
+  describe('GET /admin/auction_bids', () => {
     it('should list all auction bids when authenticated as admin', async () => {
       const auctionBid = await AuctionBidFactory.createAuctionBid({
         auction_id: auction.id,
@@ -40,7 +40,7 @@ describe('Admin Auction Bid Routes', () => {
       });
 
       const response = await request(app)
-        .get('/admin/auction-bids')
+        .get('/admin/auction_bids')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -56,7 +56,7 @@ describe('Admin Auction Bid Routes', () => {
       });
 
       const response = await request(app)
-        .get(`/admin/auction-bids?auction_id=${auction.id}`)
+        .get(`/admin/auction_bids?auction_id=${auction.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -72,7 +72,7 @@ describe('Admin Auction Bid Routes', () => {
       });
 
       const response = await request(app)
-        .get(`/admin/auction-bids?bidder_id=${regularUser.id}`)
+        .get(`/admin/auction_bids?bidder_id=${regularUser.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -89,7 +89,7 @@ describe('Admin Auction Bid Routes', () => {
       });
 
       const response = await request(app)
-        .get(`/admin/auction-bids?status=${AuctionBid.STATUSES.PENDING}`)
+        .get(`/admin/auction_bids?status=${AuctionBid.STATUSES.PENDING}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -100,19 +100,19 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get('/admin/auction-bids')
+        .get('/admin/auction_bids')
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 401 when not authenticated', async () => {
       await request(app)
-        .get('/admin/auction-bids')
+        .get('/admin/auction_bids')
         .expect(401);
     });
   });
 
-  describe('GET /admin/auction-bids/:id', () => {
+  describe('GET /admin/auction_bids/:id', () => {
     let auctionBid;
 
     beforeEach(async () => {
@@ -124,7 +124,7 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should show auction bid details when authenticated as admin', async () => {
       const response = await request(app)
-        .get(`/admin/auction-bids/${auctionBid.id}`)
+        .get(`/admin/auction_bids/${auctionBid.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -136,20 +136,20 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get(`/admin/auction-bids/${auctionBid.id}`)
+        .get(`/admin/auction_bids/${auctionBid.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when auction bid not found', async () => {
       await request(app)
-        .get('/admin/auction-bids/999999')
+        .get('/admin/auction_bids/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
   });
 
-  describe('POST /admin/auction-bids', () => {
+  describe('POST /admin/auction_bids', () => {
     let newAuctionBid;
 
     beforeEach(() => {
@@ -164,7 +164,7 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should create an auction bid when authenticated as admin', async () => {
       const response = await request(app)
-        .post('/admin/auction-bids')
+        .post('/admin/auction_bids')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(newAuctionBid)
         .expect('Content-Type', /json/)
@@ -178,7 +178,7 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .post('/admin/auction-bids')
+        .post('/admin/auction_bids')
         .set('Authorization', `Bearer ${regularToken}`)
         .send(newAuctionBid)
         .expect(404);
@@ -189,14 +189,14 @@ describe('Admin Auction Bid Routes', () => {
       delete newAuctionBid.currency;
 
       await request(app)
-        .post('/admin/auction-bids')
+        .post('/admin/auction_bids')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(newAuctionBid)
         .expect(400);
     });
   });
 
-  describe('PATCH /admin/auction-bids/:id', () => {
+  describe('PATCH /admin/auction_bids/:id', () => {
     let auctionBid;
     let updates;
 
@@ -214,7 +214,7 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should update an auction bid when authenticated as admin', async () => {
       const response = await request(app)
-        .patch(`/admin/auction-bids/${auctionBid.id}`)
+        .patch(`/admin/auction_bids/${auctionBid.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send(updates)
         .expect('Content-Type', /json/)
@@ -226,7 +226,7 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .patch(`/admin/auction-bids/${auctionBid.id}`)
+        .patch(`/admin/auction_bids/${auctionBid.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .send(updates)
         .expect(404);
@@ -234,14 +234,14 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should return 404 when auction bid not found', async () => {
       await request(app)
-        .patch('/admin/auction-bids/999999')
+        .patch('/admin/auction_bids/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(updates)
         .expect(404);
     });
   });
 
-  describe('DELETE /admin/auction-bids/:id', () => {
+  describe('DELETE /admin/auction_bids/:id', () => {
     let auctionBid;
 
     beforeEach(async () => {
@@ -253,7 +253,7 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should delete an auction bid when authenticated as admin', async () => {
       await request(app)
-        .delete(`/admin/auction-bids/${auctionBid.id}`)
+        .delete(`/admin/auction_bids/${auctionBid.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(204);
 
@@ -263,14 +263,14 @@ describe('Admin Auction Bid Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .delete(`/admin/auction-bids/${auctionBid.id}`)
+        .delete(`/admin/auction_bids/${auctionBid.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when auction bid not found', async () => {
       await request(app)
-        .delete('/admin/auction-bids/999999')
+        .delete('/admin/auction_bids/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

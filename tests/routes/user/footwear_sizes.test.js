@@ -20,12 +20,12 @@ afterAll(() => {
 });
 
 describe('Footwear Size Routes', () => {
-  describe('GET /user/footwear-sizes', () => {
+  describe('GET /user/footwear_sizes', () => {
     it('should list all footwear sizes', async () => {
       const footwearSize2 = await FootwearSizeFactory.createFootwearSize();
 
       const response = await request(app)
-        .get('/user/footwear-sizes')
+        .get('/user/footwear_sizes')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -34,10 +34,10 @@ describe('Footwear Size Routes', () => {
     });
   });
 
-  describe('GET /user/footwear-sizes/:id', () => {
+  describe('GET /user/footwear_sizes/:id', () => {
     it('should get a single footwear size', async () => {
       const response = await request(app)
-        .get(`/user/footwear-sizes/${footwearSize.id}`)
+        .get(`/user/footwear_sizes/${footwearSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -47,7 +47,7 @@ describe('Footwear Size Routes', () => {
 
     it('should return 404 for non-existent footwear size', async () => {
       const response = await request(app)
-        .get('/user/footwear-sizes/999999')
+        .get('/user/footwear_sizes/999999')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(404);
@@ -55,10 +55,10 @@ describe('Footwear Size Routes', () => {
     });
   });
 
-  describe('POST /user/footwear-sizes/select/:id', () => {
+  describe('POST /user/footwear_sizes/select/:id', () => {
     it('should select a footwear size for user', async () => {
       const response = await request(app)
-        .post(`/user/footwear-sizes/select/${footwearSize.id}`)
+        .post(`/user/footwear_sizes/select/${footwearSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -72,12 +72,12 @@ describe('Footwear Size Routes', () => {
     it('should not allow selecting the same footwear size twice', async () => {
       // First selection
       await request(app)
-        .post(`/user/footwear-sizes/select/${footwearSize.id}`)
+        .post(`/user/footwear_sizes/select/${footwearSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       // Second selection attempt
       const response = await request(app)
-        .post(`/user/footwear-sizes/select/${footwearSize.id}`)
+        .post(`/user/footwear_sizes/select/${footwearSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
@@ -86,7 +86,7 @@ describe('Footwear Size Routes', () => {
 
     it('should return 404 for non-existent footwear size', async () => {
       const response = await request(app)
-        .post('/user/footwear-sizes/select/999999')
+        .post('/user/footwear_sizes/select/999999')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(404);
@@ -94,16 +94,16 @@ describe('Footwear Size Routes', () => {
     });
   });
 
-  describe('DELETE /user/footwear-sizes/select/:id', () => {
+  describe('DELETE /user/footwear_sizes/select/:id', () => {
     it('should unselect a footwear size for user', async () => {
       // First select the footwear size
       await request(app)
-        .post(`/user/footwear-sizes/select/${footwearSize.id}`)
+        .post(`/user/footwear_sizes/select/${footwearSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       // Then unselect it
       const response = await request(app)
-        .delete(`/user/footwear-sizes/select/${footwearSize.id}`)
+        .delete(`/user/footwear_sizes/select/${footwearSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -116,7 +116,7 @@ describe('Footwear Size Routes', () => {
 
     it('should return 400 when trying to unselect a non-selected footwear size', async () => {
       const response = await request(app)
-        .delete(`/user/footwear-sizes/select/${footwearSize.id}`)
+        .delete(`/user/footwear_sizes/select/${footwearSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
@@ -125,7 +125,7 @@ describe('Footwear Size Routes', () => {
 
     it('should return 404 for non-existent footwear size', async () => {
       const response = await request(app)
-        .delete('/user/footwear-sizes/select/999999')
+        .delete('/user/footwear_sizes/select/999999')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(404);

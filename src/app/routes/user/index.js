@@ -14,9 +14,9 @@ const contactsRouter = require('./contacts');
 
 router.use('/categories', categoriesRoutes);
 router.use('/brands', brandsRoutes);
-router.use('/footwear-sizes', footwear_sizesRoutes);
+router.use('/footwear_sizes', footwear_sizesRoutes);
 router.use('/styles', stylesRoutes);
-router.use('/top-sizes', topSizesRoutes);
+router.use('/top_sizes', topSizesRoutes);
 router.use('/users', userRoutes);
 router.use('/contacts', contactsRouter);
 

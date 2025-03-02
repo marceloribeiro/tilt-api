@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /admin/room-users:
+ * /admin/room_users:
  *   get:
  *     summary: List all room users
  *     tags: [Admin Room Users]
@@ -89,7 +89,7 @@
  *       400:
  *         description: Invalid input
  *
- * /admin/room-users/{id}:
+ * /admin/room_users/{id}:
  *   get:
  *     summary: Get a specific room user
  *     tags: [Admin Room Users]

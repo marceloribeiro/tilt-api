@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /admin/auction-bids:
+ * /admin/auction_bids:
  *   get:
  *     summary: List all auction bids
  *     tags: [Admin Auction Bids]
@@ -87,7 +87,7 @@
  *       400:
  *         description: Invalid input
  *
- * /admin/auction-bids/{id}:
+ * /admin/auction_bids/{id}:
  *   get:
  *     summary: Get a specific auction bid
  *     tags: [Admin Auction Bids]

@@ -23,7 +23,7 @@ afterAll(() => {
 });
 
 describe('Admin Top Size Routes', () => {
-  describe('GET /admin/top-sizes', () => {
+  describe('GET /admin/top_sizes', () => {
     beforeEach(async () => {
       // Create some test top sizes
       await TopSizeFactory.createTopSize();
@@ -32,7 +32,7 @@ describe('Admin Top Size Routes', () => {
 
     it('should list all top sizes when authenticated as admin', async () => {
       const response = await request(app)
-        .get('/admin/top-sizes')
+        .get('/admin/top_sizes')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -42,19 +42,19 @@ describe('Admin Top Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get('/admin/top-sizes')
+        .get('/admin/top_sizes')
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 401 when not authenticated', async () => {
       await request(app)
-        .get('/admin/top-sizes')
+        .get('/admin/top_sizes')
         .expect(401);
     });
   });
 
-  describe('GET /admin/top-sizes/:id', () => {
+  describe('GET /admin/top_sizes/:id', () => {
     let topSize;
 
     beforeEach(async () => {
@@ -63,7 +63,7 @@ describe('Admin Top Size Routes', () => {
 
     it('should show top size details when authenticated as admin', async () => {
       const response = await request(app)
-        .get(`/admin/top-sizes/${topSize.id}`)
+        .get(`/admin/top_sizes/${topSize.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -73,25 +73,25 @@ describe('Admin Top Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get(`/admin/top-sizes/${topSize.id}`)
+        .get(`/admin/top_sizes/${topSize.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when top size not found', async () => {
       await request(app)
-        .get('/admin/top-sizes/999999')
+        .get('/admin/top_sizes/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
   });
 
-  describe('POST /admin/top-sizes', () => {
+  describe('POST /admin/top_sizes', () => {
     const newTopSize = { name: 'L' };
 
     it('should create a top size when authenticated as admin', async () => {
       const response = await request(app)
-        .post('/admin/top-sizes')
+        .post('/admin/top_sizes')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(newTopSize)
         .expect('Content-Type', /json/)
@@ -103,7 +103,7 @@ describe('Admin Top Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .post('/admin/top-sizes')
+        .post('/admin/top_sizes')
         .set('Authorization', `Bearer ${regularToken}`)
         .send(newTopSize)
         .expect(404);
@@ -111,14 +111,14 @@ describe('Admin Top Size Routes', () => {
 
     it('should return 400 when required fields are missing', async () => {
       await request(app)
-        .post('/admin/top-sizes')
+        .post('/admin/top_sizes')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({})
         .expect(400);
     });
   });
 
-  describe('PUT /admin/top-sizes/:id', () => {
+  describe('PUT /admin/top_sizes/:id', () => {
     let topSize;
 
     beforeEach(async () => {
@@ -129,7 +129,7 @@ describe('Admin Top Size Routes', () => {
       const updates = { name: 'XL' };
 
       const response = await request(app)
-        .put(`/admin/top-sizes/${topSize.id}`)
+        .put(`/admin/top_sizes/${topSize.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send(updates)
         .expect('Content-Type', /json/)
@@ -141,7 +141,7 @@ describe('Admin Top Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .put(`/admin/top-sizes/${topSize.id}`)
+        .put(`/admin/top_sizes/${topSize.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .send({ name: 'XXL' })
         .expect(404);
@@ -149,14 +149,14 @@ describe('Admin Top Size Routes', () => {
 
     it('should return 404 when top size not found', async () => {
       await request(app)
-        .put('/admin/top-sizes/999999')
+        .put('/admin/top_sizes/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ name: 'XXL' })
         .expect(404);
     });
   });
 
-  describe('DELETE /admin/top-sizes/:id', () => {
+  describe('DELETE /admin/top_sizes/:id', () => {
     let topSize;
 
     beforeEach(async () => {
@@ -165,7 +165,7 @@ describe('Admin Top Size Routes', () => {
 
     it('should delete a top size when authenticated as admin', async () => {
       await request(app)
-        .delete(`/admin/top-sizes/${topSize.id}`)
+        .delete(`/admin/top_sizes/${topSize.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(204);
 
@@ -175,14 +175,14 @@ describe('Admin Top Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .delete(`/admin/top-sizes/${topSize.id}`)
+        .delete(`/admin/top_sizes/${topSize.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when top size not found', async () => {
       await request(app)
-        .delete('/admin/top-sizes/999999')
+        .delete('/admin/top_sizes/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

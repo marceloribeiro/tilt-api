@@ -27,7 +27,7 @@ afterAll(() => {
 });
 
 describe('Admin Room User Routes', () => {
-  describe('GET /admin/room-users', () => {
+  describe('GET /admin/room_users', () => {
     it('should list all room users when authenticated as admin', async () => {
       const roomUser = await RoomUserFactory.createRoomUser({
         room_id: room.id,
@@ -35,7 +35,7 @@ describe('Admin Room User Routes', () => {
       });
 
       const response = await request(app)
-        .get('/admin/room-users')
+        .get('/admin/room_users')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -51,7 +51,7 @@ describe('Admin Room User Routes', () => {
       });
 
       const response = await request(app)
-        .get(`/admin/room-users?room_id=${room.id}`)
+        .get(`/admin/room_users?room_id=${room.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -67,7 +67,7 @@ describe('Admin Room User Routes', () => {
       });
 
       const response = await request(app)
-        .get(`/admin/room-users?user_id=${regularUser.id}`)
+        .get(`/admin/room_users?user_id=${regularUser.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -84,7 +84,7 @@ describe('Admin Room User Routes', () => {
       });
 
       const response = await request(app)
-        .get('/admin/room-users?status=active')
+        .get('/admin/room_users?status=active')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -95,19 +95,19 @@ describe('Admin Room User Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get('/admin/room-users')
+        .get('/admin/room_users')
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 401 when not authenticated', async () => {
       await request(app)
-        .get('/admin/room-users')
+        .get('/admin/room_users')
         .expect(401);
     });
   });
 
-  describe('GET /admin/room-users/:id', () => {
+  describe('GET /admin/room_users/:id', () => {
     let roomUser;
 
     beforeEach(async () => {
@@ -119,7 +119,7 @@ describe('Admin Room User Routes', () => {
 
     it('should show room user details when authenticated as admin', async () => {
       const response = await request(app)
-        .get(`/admin/room-users/${roomUser.id}`)
+        .get(`/admin/room_users/${roomUser.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -131,20 +131,20 @@ describe('Admin Room User Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get(`/admin/room-users/${roomUser.id}`)
+        .get(`/admin/room_users/${roomUser.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when room user not found', async () => {
       await request(app)
-        .get('/admin/room-users/999999')
+        .get('/admin/room_users/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
   });
 
-  describe('POST /admin/room-users', () => {
+  describe('POST /admin/room_users', () => {
     let newRoomUser;
 
     beforeEach(() => {
@@ -158,7 +158,7 @@ describe('Admin Room User Routes', () => {
 
     it('should create a room user when authenticated as admin', async () => {
       const response = await request(app)
-        .post('/admin/room-users')
+        .post('/admin/room_users')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(newRoomUser)
         .expect('Content-Type', /json/)
@@ -171,7 +171,7 @@ describe('Admin Room User Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .post('/admin/room-users')
+        .post('/admin/room_users')
         .set('Authorization', `Bearer ${regularToken}`)
         .send(newRoomUser)
         .expect(404);
@@ -182,14 +182,14 @@ describe('Admin Room User Routes', () => {
       delete newRoomUser.joined_at;
 
       await request(app)
-        .post('/admin/room-users')
+        .post('/admin/room_users')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(newRoomUser)
         .expect(400);
     });
   });
 
-  describe('PATCH /admin/room-users/:id', () => {
+  describe('PATCH /admin/room_users/:id', () => {
     let roomUser;
     let updates;
 
@@ -207,7 +207,7 @@ describe('Admin Room User Routes', () => {
 
     it('should update a room user when authenticated as admin', async () => {
       const response = await request(app)
-        .patch(`/admin/room-users/${roomUser.id}`)
+        .patch(`/admin/room_users/${roomUser.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send(updates)
         .expect('Content-Type', /json/)
@@ -219,7 +219,7 @@ describe('Admin Room User Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .patch(`/admin/room-users/${roomUser.id}`)
+        .patch(`/admin/room_users/${roomUser.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .send(updates)
         .expect(404);
@@ -227,14 +227,14 @@ describe('Admin Room User Routes', () => {
 
     it('should return 404 when room user not found', async () => {
       await request(app)
-        .patch('/admin/room-users/999999')
+        .patch('/admin/room_users/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(updates)
         .expect(404);
     });
   });
 
-  describe('DELETE /admin/room-users/:id', () => {
+  describe('DELETE /admin/room_users/:id', () => {
     let roomUser;
 
     beforeEach(async () => {
@@ -246,7 +246,7 @@ describe('Admin Room User Routes', () => {
 
     it('should delete a room user when authenticated as admin', async () => {
       await request(app)
-        .delete(`/admin/room-users/${roomUser.id}`)
+        .delete(`/admin/room_users/${roomUser.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(204);
 
@@ -256,14 +256,14 @@ describe('Admin Room User Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .delete(`/admin/room-users/${roomUser.id}`)
+        .delete(`/admin/room_users/${roomUser.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when room user not found', async () => {
       await request(app)
-        .delete('/admin/room-users/999999')
+        .delete('/admin/room_users/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

@@ -20,12 +20,12 @@ afterAll(() => {
 });
 
 describe('Top Size Routes', () => {
-  describe('GET /user/top-sizes', () => {
+  describe('GET /user/top_sizes', () => {
     it('should list all top sizes', async () => {
       const topSize2 = await TopSizeFactory.createTopSize();
 
       const response = await request(app)
-        .get('/user/top-sizes')
+        .get('/user/top_sizes')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -34,10 +34,10 @@ describe('Top Size Routes', () => {
     });
   });
 
-  describe('GET /user/top-sizes/:id', () => {
+  describe('GET /user/top_sizes/:id', () => {
     it('should get a single top size', async () => {
       const response = await request(app)
-        .get(`/user/top-sizes/${topSize.id}`)
+        .get(`/user/top_sizes/${topSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -47,7 +47,7 @@ describe('Top Size Routes', () => {
 
     it('should return 404 for non-existent top size', async () => {
       const response = await request(app)
-        .get('/user/top-sizes/999999')
+        .get('/user/top_sizes/999999')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(404);
@@ -55,10 +55,10 @@ describe('Top Size Routes', () => {
     });
   });
 
-  describe('POST /user/top-sizes/select/:id', () => {
+  describe('POST /user/top_sizes/select/:id', () => {
     it('should select a top size for user', async () => {
       const response = await request(app)
-        .post(`/user/top-sizes/select/${topSize.id}`)
+        .post(`/user/top_sizes/select/${topSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -72,12 +72,12 @@ describe('Top Size Routes', () => {
     it('should not allow selecting the same top size twice', async () => {
       // First selection
       await request(app)
-        .post(`/user/top-sizes/select/${topSize.id}`)
+        .post(`/user/top_sizes/select/${topSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       // Second selection attempt
       const response = await request(app)
-        .post(`/user/top-sizes/select/${topSize.id}`)
+        .post(`/user/top_sizes/select/${topSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
@@ -86,7 +86,7 @@ describe('Top Size Routes', () => {
 
     it('should return 404 for non-existent top size', async () => {
       const response = await request(app)
-        .post('/user/top-sizes/select/999999')
+        .post('/user/top_sizes/select/999999')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(404);
@@ -94,16 +94,16 @@ describe('Top Size Routes', () => {
     });
   });
 
-  describe('DELETE /user/top-sizes/select/:id', () => {
+  describe('DELETE /user/top_sizes/select/:id', () => {
     it('should unselect a top size for user', async () => {
       // First select the top size
       await request(app)
-        .post(`/user/top-sizes/select/${topSize.id}`)
+        .post(`/user/top_sizes/select/${topSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       // Then unselect it
       const response = await request(app)
-        .delete(`/user/top-sizes/select/${topSize.id}`)
+        .delete(`/user/top_sizes/select/${topSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -116,7 +116,7 @@ describe('Top Size Routes', () => {
 
     it('should return 400 when trying to unselect a non-selected top size', async () => {
       const response = await request(app)
-        .delete(`/user/top-sizes/select/${topSize.id}`)
+        .delete(`/user/top_sizes/select/${topSize.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
@@ -125,7 +125,7 @@ describe('Top Size Routes', () => {
 
     it('should return 404 for non-existent top size', async () => {
       const response = await request(app)
-        .delete('/user/top-sizes/select/999999')
+        .delete('/user/top_sizes/select/999999')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(404);

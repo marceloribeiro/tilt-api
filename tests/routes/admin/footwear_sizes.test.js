@@ -23,7 +23,7 @@ afterAll(() => {
 });
 
 describe('Admin Footwear Size Routes', () => {
-  describe('GET /admin/footwear-sizes', () => {
+  describe('GET /admin/footwear_sizes', () => {
     beforeEach(async () => {
       // Create some test footwear sizes
       await FootwearSizeFactory.createFootwearSize();
@@ -32,7 +32,7 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should list all footwear sizes when authenticated as admin', async () => {
       const response = await request(app)
-        .get('/admin/footwear-sizes')
+        .get('/admin/footwear_sizes')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -41,19 +41,19 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get('/admin/footwear-sizes')
+        .get('/admin/footwear_sizes')
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 401 when not authenticated', async () => {
       await request(app)
-        .get('/admin/footwear-sizes')
+        .get('/admin/footwear_sizes')
         .expect(401);
     });
   });
 
-  describe('GET /admin/footwear-sizes/:id', () => {
+  describe('GET /admin/footwear_sizes/:id', () => {
     let footwearSize;
 
     beforeEach(async () => {
@@ -62,7 +62,7 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should show footwear size details when authenticated as admin', async () => {
       const response = await request(app)
-        .get(`/admin/footwear-sizes/${footwearSize.id}`)
+        .get(`/admin/footwear_sizes/${footwearSize.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect('Content-Type', /json/)
         .expect(200);
@@ -72,25 +72,25 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .get(`/admin/footwear-sizes/${footwearSize.id}`)
+        .get(`/admin/footwear_sizes/${footwearSize.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when footwear size not found', async () => {
       await request(app)
-        .get('/admin/footwear-sizes/999999')
+        .get('/admin/footwear_sizes/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
   });
 
-  describe('POST /admin/footwear-sizes', () => {
+  describe('POST /admin/footwear_sizes', () => {
     const newFootwearSize = { name: '43' };
 
     it('should create a footwear size when authenticated as admin', async () => {
       const response = await request(app)
-        .post('/admin/footwear-sizes')
+        .post('/admin/footwear_sizes')
         .set('Authorization', `Bearer ${adminToken}`)
         .send(newFootwearSize)
         .expect('Content-Type', /json/)
@@ -102,7 +102,7 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .post('/admin/footwear-sizes')
+        .post('/admin/footwear_sizes')
         .set('Authorization', `Bearer ${regularToken}`)
         .send(newFootwearSize)
         .expect(404);
@@ -110,14 +110,14 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should return 400 when required fields are missing', async () => {
       await request(app)
-        .post('/admin/footwear-sizes')
+        .post('/admin/footwear_sizes')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({})
         .expect(400);
     });
   });
 
-  describe('PUT /admin/footwear-sizes/:id', () => {
+  describe('PUT /admin/footwear_sizes/:id', () => {
     let footwearSize;
 
     beforeEach(async () => {
@@ -128,7 +128,7 @@ describe('Admin Footwear Size Routes', () => {
       const updates = { name: '44' };
 
       const response = await request(app)
-        .put(`/admin/footwear-sizes/${footwearSize.id}`)
+        .put(`/admin/footwear_sizes/${footwearSize.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send(updates)
         .expect('Content-Type', /json/)
@@ -140,7 +140,7 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .put(`/admin/footwear-sizes/${footwearSize.id}`)
+        .put(`/admin/footwear_sizes/${footwearSize.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .send({ size: '45' })
         .expect(404);
@@ -148,14 +148,14 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should return 404 when footwear size not found', async () => {
       await request(app)
-        .put('/admin/footwear-sizes/999999')
+        .put('/admin/footwear_sizes/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ name: '45' })
         .expect(404);
     });
   });
 
-  describe('DELETE /admin/footwear-sizes/:id', () => {
+  describe('DELETE /admin/footwear_sizes/:id', () => {
     let footwearSize;
 
     beforeEach(async () => {
@@ -164,7 +164,7 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should delete a footwear size when authenticated as admin', async () => {
       await request(app)
-        .delete(`/admin/footwear-sizes/${footwearSize.id}`)
+        .delete(`/admin/footwear_sizes/${footwearSize.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(204);
 
@@ -174,14 +174,14 @@ describe('Admin Footwear Size Routes', () => {
 
     it('should return 404 when authenticated as non-admin', async () => {
       await request(app)
-        .delete(`/admin/footwear-sizes/${footwearSize.id}`)
+        .delete(`/admin/footwear_sizes/${footwearSize.id}`)
         .set('Authorization', `Bearer ${regularToken}`)
         .expect(404);
     });
 
     it('should return 404 when footwear size not found', async () => {
       await request(app)
-        .delete('/admin/footwear-sizes/999999')
+        .delete('/admin/footwear_sizes/999999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
