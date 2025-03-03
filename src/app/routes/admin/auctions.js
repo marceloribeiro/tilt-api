@@ -8,6 +8,21 @@
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: per_page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *         description: Number of items per page
+ *       - in: query
  *         name: owner_id
  *         schema:
  *           type: integer
@@ -28,20 +43,36 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 allOf:
- *                   - $ref: '#/components/schemas/Auction'
- *                   - type: object
- *                     properties:
- *                       owner:
- *                         $ref: '#/components/schemas/User'
- *                       item:
- *                         $ref: '#/components/schemas/Item'
- *                       highestBid:
- *                         $ref: '#/components/schemas/AuctionBid'
- *       401:
- *         description: Unauthorized
+ *               type: object
+ *               properties:
+ *                 auctions:
+ *                   type: array
+ *                   items:
+ *                     allOf:
+ *                       - $ref: '#/components/schemas/Auction'
+ *                       - type: object
+ *                         properties:
+ *                           owner:
+ *                             $ref: '#/components/schemas/User'
+ *                           item:
+ *                             $ref: '#/components/schemas/Item'
+ *                           highestBid:
+ *                             $ref: '#/components/schemas/AuctionBid'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of records
+ *                     per_page:
+ *                       type: integer
+ *                       description: Number of items per page
+ *                     current_page:
+ *                       type: integer
+ *                       description: Current page number
+ *                     total_pages:
+ *                       type: integer
+ *                       description: Total number of pages
  *
  *   post:
  *     summary: Create a new auction
@@ -207,10 +238,15 @@ const express = require('express');
 const router = express.Router();
 const Auction = require('../../models/auction');
 const AuctionPresenter = require('../../presenters/auction_presenter');
+const { PAGE_SIZE } = require('../../../config/constants');
+
 
 // List all auctions
 router.get('/', async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const per_page = parseInt(req.query.per_page) || PAGE_SIZE;
+
     const query = Auction.query().withGraphFetched('[owner, item, highestBid]');
 
     if (req.query.owner_id) {
@@ -225,8 +261,17 @@ router.get('/', async (req, res) => {
       query.where('status', req.query.status);
     }
 
-    const auctions = await query;
-    res.json({ auctions: await AuctionPresenter.presentMany(auctions) });
+    const result = await query.page(page - 1, per_page);
+
+    res.json({
+      auctions: await AuctionPresenter.presentMany(result.results),
+      pagination: {
+        total: result.total,
+        per_page: per_page,
+        current_page: page,
+        total_pages: Math.ceil(result.total / per_page)
+      }
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

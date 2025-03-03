@@ -8,6 +8,21 @@
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: per_page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *         description: Number of items per page
+ *       - in: query
  *         name: room_id
  *         schema:
  *           type: integer
@@ -28,20 +43,36 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 allOf:
- *                   - $ref: '#/components/schemas/Livestream'
- *                   - type: object
- *                     properties:
- *                       room:
- *                         $ref: '#/components/schemas/Room'
- *                       host:
- *                         $ref: '#/components/schemas/User'
- *                       currentAuction:
- *                         $ref: '#/components/schemas/Auction'
- *       401:
- *         description: Unauthorized
+ *               type: object
+ *               properties:
+ *                 livestreams:
+ *                   type: array
+ *                   items:
+ *                     allOf:
+ *                       - $ref: '#/components/schemas/Livestream'
+ *                       - type: object
+ *                         properties:
+ *                           room:
+ *                             $ref: '#/components/schemas/Room'
+ *                           host:
+ *                             $ref: '#/components/schemas/User'
+ *                           currentAuction:
+ *                             $ref: '#/components/schemas/Auction'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of records
+ *                     per_page:
+ *                       type: integer
+ *                       description: Number of items per page
+ *                     current_page:
+ *                       type: integer
+ *                       description: Current page number
+ *                     total_pages:
+ *                       type: integer
+ *                       description: Total number of pages
  *
  *   post:
  *     summary: Create a new livestream
@@ -223,10 +254,15 @@ const express = require('express');
 const router = express.Router();
 const Livestream = require('../../models/livestream');
 const LivestreamPresenter = require('../../presenters/livestream_presenter');
+const { PAGE_SIZE } = require('../../../config/constants');
+
 
 // List all livestreams
 router.get('/', async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const per_page = parseInt(req.query.per_page) || PAGE_SIZE;
+
     const query = Livestream.query().withGraphFetched('[room, host, currentAuction]');
 
     if (req.query.room_id) {
@@ -241,8 +277,17 @@ router.get('/', async (req, res) => {
       query.where('status', req.query.status);
     }
 
-    const livestreams = await query;
-    res.json({ livestreams: await LivestreamPresenter.presentMany(livestreams) });
+    const result = await query.page(page - 1, per_page);
+
+    res.json({
+      livestreams: await LivestreamPresenter.presentMany(result.results),
+      pagination: {
+        total: result.total,
+        per_page: per_page,
+        current_page: page,
+        total_pages: Math.ceil(result.total / per_page)
+      }
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

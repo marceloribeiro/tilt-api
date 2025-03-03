@@ -6,17 +6,49 @@
  *     tags: [Admin Top Sizes]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: per_page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of all top sizes
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/TopSize'
- *       401:
- *         description: Unauthorized
+ *               type: object
+ *               properties:
+ *                 top_sizes:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/TopSize'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of records
+ *                     per_page:
+ *                       type: integer
+ *                       description: Number of items per page
+ *                     current_page:
+ *                       type: integer
+ *                       description: Current page number
+ *                     total_pages:
+ *                       type: integer
+ *                       description: Total number of pages
  *
  *   post:
  *     summary: Create a new top size
@@ -118,12 +150,26 @@ const express = require('express');
 const router = express.Router();
 const TopSize = require('../../models/top_size');
 const TopSizePresenter = require('../../presenters/top_size_presenter');
+const { PAGE_SIZE } = require('../../../config/constants');
+
 
 // List all top sizes
 router.get('/', async (req, res) => {
   try {
-    const sizes = await TopSize.query();
-    res.json({ top_sizes: await TopSizePresenter.presentMany(sizes) });
+    const page = parseInt(req.query.page) || 1;
+    const per_page = parseInt(req.query.per_page) || PAGE_SIZE;
+
+    const result = await TopSize.query().page(page - 1, per_page);
+
+    res.json({
+      top_sizes: await TopSizePresenter.presentMany(result.results),
+      pagination: {
+        total: result.total,
+        per_page: per_page,
+        current_page: page,
+        total_pages: Math.ceil(result.total / per_page)
+      }
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

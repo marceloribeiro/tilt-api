@@ -8,6 +8,21 @@
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: per_page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *         description: Number of items per page
+ *       - in: query
  *         name: user_id
  *         schema:
  *           type: integer
@@ -18,16 +33,32 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 allOf:
- *                   - $ref: '#/components/schemas/Contact'
- *                   - type: object
- *                     properties:
- *                       user:
- *                         $ref: '#/components/schemas/User'
- *       401:
- *         description: Unauthorized
+ *               type: object
+ *               properties:
+ *                 contacts:
+ *                   type: array
+ *                   items:
+ *                     allOf:
+ *                       - $ref: '#/components/schemas/Contact'
+ *                       - type: object
+ *                         properties:
+ *                           user:
+ *                             $ref: '#/components/schemas/User'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of records
+ *                     per_page:
+ *                       type: integer
+ *                       description: Number of items per page
+ *                     current_page:
+ *                       type: integer
+ *                       description: Current page number
+ *                     total_pages:
+ *                       type: integer
+ *                       description: Total number of pages
  *
  *   post:
  *     summary: Create a new contact
@@ -156,12 +187,32 @@ const express = require('express');
 const router = express.Router();
 const Contact = require('../../models/contact');
 const ContactPresenter = require('../../presenters/contact_presenter');
+const { PAGE_SIZE } = require('../../../config/constants');
+
 
 // List all contacts
 router.get('/', async (req, res) => {
   try {
-    const contacts = await Contact.query().withGraphFetched('user');
-    res.json({ contacts: await ContactPresenter.presentMany(contacts) });
+    const page = parseInt(req.query.page) || 1;
+    const per_page = parseInt(req.query.per_page) || PAGE_SIZE;
+
+    const query = Contact.query().withGraphFetched('user');
+
+    if (req.query.user_id) {
+      query.where('user_id', req.query.user_id);
+    }
+
+    const result = await query.page(page - 1, per_page);
+
+    res.json({
+      contacts: await ContactPresenter.presentMany(result.results),
+      pagination: {
+        total: result.total,
+        per_page: per_page,
+        current_page: page,
+        total_pages: Math.ceil(result.total / per_page)
+      }
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
