@@ -29,8 +29,8 @@ describe('Footwear Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body[0]).toHaveProperty('id');
-      expect(response.body[0]).toHaveProperty('name');
+      expect(response.body.footwear_sizes[0]).toHaveProperty('id');
+      expect(response.body.footwear_sizes[0]).toHaveProperty('name');
     });
   });
 
@@ -41,8 +41,8 @@ describe('Footwear Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(footwearSize.id);
-      expect(response.body.name).toBe(footwearSize.name);
+      expect(response.body.footwear_size.id).toBe(footwearSize.id);
+      expect(response.body.footwear_size.name).toBe(footwearSize.name);
     });
 
     it('should return 404 for non-existent footwear size', async () => {
@@ -62,7 +62,7 @@ describe('Footwear Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(footwearSize.id);
+      expect(response.body.footwear_size.id).toBe(footwearSize.id);
 
       const userFootwearSizes = await user.$relatedQuery('footwear_sizes');
       expect(userFootwearSizes).toHaveLength(1);
@@ -107,7 +107,7 @@ describe('Footwear Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(footwearSize.id);
+      expect(response.body.footwear_size.id).toBe(footwearSize.id);
 
       // Verify the relationship was removed
       const userFootwearSizes = await user.$relatedQuery('footwear_sizes');

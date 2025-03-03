@@ -6,15 +6,49 @@
  *     tags: [User Footwear Sizes]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: per_page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of all footwear sizes
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/FootwearSize'
+ *               type: object
+ *               properties:
+ *                 footwear_sizes:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/FootwearSize'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of records
+ *                     per_page:
+ *                       type: integer
+ *                       description: Number of items per page
+ *                     current_page:
+ *                       type: integer
+ *                       description: Current page number
+ *                     total_pages:
+ *                       type: integer
+ *                       description: Total number of pages
  *       401:
  *         description: Not authenticated
  *
@@ -36,7 +70,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/FootwearSize'
+ *               type: object
+ *               properties:
+ *                 footwear_size:
+ *                   $ref: '#/components/schemas/FootwearSize'
  *       404:
  *         description: Footwear size not found
  *
@@ -58,7 +95,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/FootwearSize'
+ *               type: object
+ *               properties:
+ *                 footwear_size:
+ *                   $ref: '#/components/schemas/FootwearSize'
  *       400:
  *         description: Footwear size already selected
  *       404:
@@ -81,7 +121,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/FootwearSize'
+ *               type: object
+ *               properties:
+ *                 footwear_size:
+ *                   $ref: '#/components/schemas/FootwearSize'
  *       400:
  *         description: Footwear size was not selected
  *       404:
@@ -92,14 +135,27 @@ const express = require('express');
 const router = express.Router();
 const FootwearSize = require('../../models/footwear_size');
 const FootwearSizePresenter = require('../../presenters/footwear_size_presenter');
+const { PAGE_SIZE } = require('../../../config/constants');
 
 
 // List all footwear sizes
 router.get('/', async (req, res) => {
   try {
-    const sizes = await FootwearSize.query();
-    const presentedSizes = await FootwearSizePresenter.presentMany(sizes, req.user);
-    res.json(presentedSizes);
+    const page = parseInt(req.query.page) || 1;
+    const per_page = parseInt(req.query.per_page) || PAGE_SIZE;
+
+    const result = await FootwearSize.query().page(page - 1, per_page);
+    const presentedSizes = await FootwearSizePresenter.presentMany(result.results, req.user);
+
+    res.json({
+      footwear_sizes: presentedSizes,
+      pagination: {
+        total: result.total,
+        per_page: per_page,
+        current_page: page,
+        total_pages: Math.ceil(result.total / per_page)
+      }
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -115,7 +171,7 @@ router.get('/:id', async (req, res) => {
 
     const userSizes = await req.user.$relatedQuery('footwear_sizes');
     const presentedSize = await FootwearSizePresenter.present(size, req.user, userSizes);
-    res.json(presentedSize);
+    res.json({ footwear_size: presentedSize });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -132,7 +188,7 @@ router.post('/select/:id', async (req, res) => {
 
     const userSizes = await req.user.$relatedQuery('footwear_sizes');
     const presentedSize = await FootwearSizePresenter.present(size, req.user, userSizes);
-    res.json(presentedSize);
+    res.json({ footwear_size: presentedSize });
   } catch (err) {
     res.status(400).json({ message: 'Footwear size already selected' });
   }
@@ -156,7 +212,7 @@ router.delete('/select/:id', async (req, res) => {
 
     const userSizes = await req.user.$relatedQuery('footwear_sizes');
     const presentedSize = await FootwearSizePresenter.present(size, req.user, userSizes);
-    res.json(presentedSize);
+    res.json({ footwear_size: presentedSize });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

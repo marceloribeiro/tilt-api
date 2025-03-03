@@ -29,8 +29,8 @@ describe('Top Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body[0]).toHaveProperty('id');
-      expect(response.body[0]).toHaveProperty('name');
+      expect(response.body.top_sizes[0]).toHaveProperty('id');
+      expect(response.body.top_sizes[0]).toHaveProperty('name');
     });
   });
 
@@ -41,8 +41,8 @@ describe('Top Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(topSize.id);
-      expect(response.body.name).toBe(topSize.name);
+      expect(response.body.top_size.id).toBe(topSize.id);
+      expect(response.body.top_size.name).toBe(topSize.name);
     });
 
     it('should return 404 for non-existent top size', async () => {
@@ -62,7 +62,7 @@ describe('Top Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(topSize.id);
+      expect(response.body.top_size.id).toBe(topSize.id);
 
       const userTopSizes = await user.$relatedQuery('top_sizes');
       expect(userTopSizes).toHaveLength(1);
@@ -107,7 +107,7 @@ describe('Top Size Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(topSize.id);
+      expect(response.body.top_size.id).toBe(topSize.id);
 
       // Verify the relationship was removed
       const userTopSizes = await user.$relatedQuery('top_sizes');

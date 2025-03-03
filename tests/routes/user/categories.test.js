@@ -29,8 +29,8 @@ describe('Category Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body[0]).toHaveProperty('id');
-      expect(response.body[0]).toHaveProperty('name');
+      expect(response.body.categories[0]).toHaveProperty('id');
+      expect(response.body.categories[0]).toHaveProperty('name');
     });
   });
 
@@ -41,8 +41,8 @@ describe('Category Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(category.id);
-      expect(response.body.name).toBe(category.name);
+      expect(response.body.category.id).toBe(category.id);
+      expect(response.body.category.name).toBe(category.name);
     });
 
     it('should return 404 for non-existent category', async () => {
@@ -62,7 +62,7 @@ describe('Category Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(category.id);
+      expect(response.body.category.id).toBe(category.id);
 
       const userCategories = await user.$relatedQuery('categories');
       expect(userCategories).toHaveLength(1);
@@ -107,7 +107,7 @@ describe('Category Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(category.id);
+      expect(response.body.category.id).toBe(category.id);
 
       // Verify the relationship was removed
       const userCategories = await user.$relatedQuery('categories');

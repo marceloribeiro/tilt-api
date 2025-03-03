@@ -3,25 +3,59 @@
  * /user/categories:
  *   get:
  *     summary: Get all categories with selection status
- *     description: Returns a list of all categories, indicating which ones are selected by the current user
+ *     description: Returns a paginated list of all categories, indicating which ones are selected by the current user
  *     tags: [User Categories]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: per_page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of categories with selection status
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 allOf:
- *                   - $ref: '#/components/schemas/Category'
- *                   - type: object
- *                     properties:
- *                       selected:
- *                         type: boolean
- *                         description: Indicates if the category is selected by the current user
+ *               type: object
+ *               properties:
+ *                 categories:
+ *                   type: array
+ *                   items:
+ *                     allOf:
+ *                       - $ref: '#/components/schemas/Category'
+ *                       - type: object
+ *                         properties:
+ *                           selected:
+ *                             type: boolean
+ *                             description: Indicates if the category is selected by the current user
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of records
+ *                     per_page:
+ *                       type: integer
+ *                       description: Number of items per page
+ *                     current_page:
+ *                       type: integer
+ *                       description: Current page number
+ *                     total_pages:
+ *                       type: integer
+ *                       description: Total number of pages
  *       401:
  *         description: Not authenticated
  *       400:
@@ -51,13 +85,16 @@
  *         content:
  *           application/json:
  *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/Category'
- *                 - type: object
- *                   properties:
- *                     selected:
- *                       type: boolean
- *                       description: Indicates if the category is selected by the current user
+ *               type: object
+ *               properties:
+ *                 category:
+ *                   allOf:
+ *                     - $ref: '#/components/schemas/Category'
+ *                     - type: object
+ *                       properties:
+ *                         selected:
+ *                           type: boolean
+ *                           description: Indicates if the category is selected by the current user
  *       404:
  *         description: Category not found
  *         content:
@@ -91,13 +128,16 @@
  *         content:
  *           application/json:
  *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/Category'
- *                 - type: object
- *                   properties:
- *                     selected:
- *                       type: boolean
- *                       description: Will be true after successful selection
+ *               type: object
+ *               properties:
+ *                 category:
+ *                   allOf:
+ *                     - $ref: '#/components/schemas/Category'
+ *                     - type: object
+ *                       properties:
+ *                         selected:
+ *                           type: boolean
+ *                           description: Will be true after successful selection
  *       400:
  *         description: Category already selected or other error
  *         content:
@@ -130,13 +170,16 @@
  *         content:
  *           application/json:
  *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/Category'
- *                 - type: object
- *                   properties:
- *                     selected:
- *                       type: boolean
- *                       description: Will be false after successful deselection
+ *               type: object
+ *               properties:
+ *                 category:
+ *                   allOf:
+ *                     - $ref: '#/components/schemas/Category'
+ *                     - type: object
+ *                       properties:
+ *                         selected:
+ *                           type: boolean
+ *                           description: Will be false after successful deselection
  *       400:
  *         description: Category was not selected or other error
  *         content:
@@ -155,12 +198,25 @@ const express = require('express');
 const router = express.Router();
 const Category = require('../../models/category');
 const CategoryPresenter = require('../../presenters/category_presenter');
+const { PAGE_SIZE } = require('../../../config/constants');
 
 router.get('/', async (req, res) => {
   try {
-    const categories = await Category.query();
-    const presentedCategories = await CategoryPresenter.presentMany(categories, req.user);
-    res.json(presentedCategories);
+    const page = parseInt(req.query.page) || 1;
+    const per_page = parseInt(req.query.per_page) || PAGE_SIZE;
+
+    const result = await Category.query().page(page - 1, per_page);
+    const presentedCategories = await CategoryPresenter.presentMany(result.results, req.user);
+
+    res.json({
+      categories: presentedCategories,
+      pagination: {
+        total: result.total,
+        per_page: per_page,
+        current_page: page,
+        total_pages: Math.ceil(result.total / per_page)
+      }
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -177,7 +233,7 @@ router.get('/:id', async (req, res) => {
     // Preload user's categories before presenting
     const userCategories = await req.user.$relatedQuery('categories');
     const presentedCategory = await CategoryPresenter.present(category, req.user, userCategories);
-    res.json(presentedCategory);
+    res.json({ category: presentedCategory });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -196,7 +252,7 @@ router.post('/select/:id', async (req, res) => {
     // Reload user's categories before presenting
     const userCategories = await req.user.$relatedQuery('categories');
     const presentedCategory = await CategoryPresenter.present(category, req.user, userCategories);
-    res.json(presentedCategory);
+    res.json({ category: presentedCategory });
   } catch (err) {
     res.status(400).json({ message: 'Category already selected' });
   }
@@ -223,7 +279,7 @@ router.delete('/select/:id', async (req, res) => {
     // Reload user's categories before presenting
     const userCategories = await req.user.$relatedQuery('categories');
     const presentedCategory = await CategoryPresenter.present(category, req.user, userCategories);
-    res.json(presentedCategory);
+    res.json({ category: presentedCategory });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

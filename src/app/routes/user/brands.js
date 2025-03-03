@@ -30,15 +30,49 @@
  *     tags: [User Brands]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: per_page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of all brands
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Brand'
+ *               type: object
+ *               properties:
+ *                 brands:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Brand'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of records
+ *                     per_page:
+ *                       type: integer
+ *                       description: Number of items per page
+ *                     current_page:
+ *                       type: integer
+ *                       description: Current page number
+ *                     total_pages:
+ *                       type: integer
+ *                       description: Total number of pages
  *       401:
  *         description: Not authenticated
  *       400:
@@ -66,7 +100,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Brand'
+ *               type: object
+ *               properties:
+ *                 brand:
+ *                   $ref: '#/components/schemas/Brand'
  *       404:
  *         description: Brand not found
  *       401:
@@ -96,7 +133,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Brand'
+ *               type: object
+ *               properties:
+ *                 brand:
+ *                   $ref: '#/components/schemas/Brand'
  *       404:
  *         description: Brand not found
  *       400:
@@ -134,7 +174,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Brand'
+ *               type: object
+ *               properties:
+ *                 brand:
+ *                   $ref: '#/components/schemas/Brand'
  *       404:
  *         description: Brand not found
  *       400:
@@ -155,13 +198,26 @@ const express = require('express');
 const router = express.Router();
 const Brand = require('../../models/brand');
 const BrandPresenter = require('../../presenters/brand_presenter');
+const { PAGE_SIZE } = require('../../../config/constants');
 
 // List all brands
 router.get('/', async (req, res) => {
   try {
-    const brands = await Brand.query();
-    const presentedBrands = await BrandPresenter.presentMany(brands, req.user);
-    res.json({ brands: presentedBrands });
+    const page = parseInt(req.query.page) || 1;
+    const per_page = parseInt(req.query.per_page) || PAGE_SIZE;
+
+    const result = await Brand.query().page(page - 1, per_page);
+    const presentedBrands = await BrandPresenter.presentMany(result.results, req.user);
+
+    res.json({
+      brands: presentedBrands,
+      pagination: {
+        total: result.total,
+        per_page: per_page,
+        current_page: page,
+        total_pages: Math.ceil(result.total / per_page)
+      }
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

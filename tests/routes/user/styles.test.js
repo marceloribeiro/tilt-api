@@ -29,8 +29,8 @@ describe('Style Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body[0]).toHaveProperty('id');
-      expect(response.body[0]).toHaveProperty('name');
+      expect(response.body.styles[0]).toHaveProperty('id');
+      expect(response.body.styles[0]).toHaveProperty('name');
     });
   });
 
@@ -41,8 +41,8 @@ describe('Style Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(style.id);
-      expect(response.body.name).toBe(style.name);
+      expect(response.body.style.id).toBe(style.id);
+      expect(response.body.style.name).toBe(style.name);
     });
 
     it('should return 404 for non-existent style', async () => {
@@ -62,7 +62,7 @@ describe('Style Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(style.id);
+      expect(response.body.style.id).toBe(style.id);
 
       const userStyles = await user.$relatedQuery('styles');
       expect(userStyles).toHaveLength(1);
@@ -107,7 +107,7 @@ describe('Style Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.id).toBe(style.id);
+      expect(response.body.style.id).toBe(style.id);
 
       // Verify the relationship was removed
       const userStyles = await user.$relatedQuery('styles');
